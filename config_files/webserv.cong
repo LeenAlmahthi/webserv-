@@ -1,0 +1,43 @@
+server  {
+    listen  8080;
+    client_max_body_size 800009mb;
+    error_page 404 404.html;
+    error_page 500 500.html;
+
+    location / {
+        root ./LEEN_serv;
+        index leen.html;
+        methods GET POST DELETE;
+        autoindex on;
+    }
+    location /nar {
+        root ./nar;
+        index index.html;
+        autoindex on;
+    }
+    location /upload
+    { 
+        upload_path ./nar;
+        methods POST;
+        autoindex off;
+    }
+
+    location /sara {
+        root ./;
+        methods GET POST;
+        autoindex on;
+        cgi_extensions .py /usr/bin/python3 .php /usr/bin/php .sh /bin/bash;
+    }
+}server {
+    listen 9090;
+    error_page 404 404.html;
+    error_page 500 500.html;
+    client_max_body_size 098758mb;
+
+    location / {
+        root ./www;
+        methods POST;
+        index index.html;
+        autoindex on;
+    }
+    }
