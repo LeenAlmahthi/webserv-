@@ -6,15 +6,16 @@
 #include <vector>
 #include <poll.h>
 #include <cstdlib>
-// #include "configuration.hpp"
-// #include "configuration.hpp"
+#include <iostream>
+#include <fstream>
+#include <iostream>
+
 struct Client
     {
         int fd; // socket 
         std::string in; // request  (recv)  {segment segment segment segment}  
         std::string out; // response (send) {segment segment segment segment} // nar  -> client? 
-        std::string status; // 
-        // int port; // port  8080 9090 
+        std::string status;
         bool closing; // yes  
     };
     struct location{
@@ -37,20 +38,15 @@ struct Client
     class Server
     {
         public:
-            // explicit Server();
             Server(std::vector<server_rule> tmp);  
             ~Server();
             void run();
-            // void add_port(int port);
         private:
             std::vector<server_rule> servers;
             long unsigned int read_server;
             std::vector<int> fd_;
-            // std::vector<int> port_;
-            // int num_socket = 0;
             std::vector<pollfd> poll_fds_;
             std::map<int, Client> clients_;
-            // std::map<int, int> port_fd;
             void setup_socket();
             void print_ip_instdin();
             bool is_port(int fd);
@@ -62,10 +58,11 @@ struct Client
             std::string build_basic_response() const;
             static int set_nonblocking(int fd);
 };
+bool    validate_servers(std::vector<server_rule> &servers);
 std::vector<server_rule> read_configuration(std::string file_name);
-bool fill_configuration(std::string file_name);
+ std::vector<server_rule> fill_configuration(std::string file_name);
 std::string remove_spaces(std::string file);
-bool fill_rule_server(std::vector<std::string> &spilt_server);
+bool fill_rule_server(std::vector<std::string> &spilt_server,std::vector<server_rule> &servers);
 void print_spilt_server(std::vector<std::string> spilt_server);
 bool find_location(std::string line, server_rule &server_1);
 bool find_root(std::string line, location &server_1,std::string target);

@@ -1,11 +1,4 @@
 #include "server.hpp"
-#include <cctype>
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-
-std::vector<std::string> spilt_server;
-std::vector<server_rule> servers;
 
 static size_t find_directive_pos(const std::string &line, const std::string &key, size_t from)
 {
@@ -250,41 +243,6 @@ bool find_error_page(std::string line, server_rule &server_1)
     }
     return true;
 }
-    // while (line.find("error_page") != std::string::npos)
-    // {
-    //     int index = line.find("error_page");
-    //     std::string value =  "";
-    //     if (index != std::string::npos)
-    //     {
-    //         value = line.substr(index+10,index+13);
-    //         line = line.substr(index+13,line.length());
-    //         index = 0;
-    //         for (int i =0; i < line.length();i++)
-    //         {
-    //             if (line[i] == ';')
-    //             {
-    //                 index = i;
-    //                 break;
-    //             }
-    //         }
-    //         // value = line.substr(0,line.length()-value.length());
-    //         std::cout  << "\n\n\n\n\n vlaue : " << value << "\n\n\nline is : " << line.substr(0,index);;
-    //         if (!(atoi(value.c_str()) >= 400 && atoi(value.c_str()) <= 599))
-    //         {
-    //             std::cout << "the error of server are wrongs\n";
-    //             return(0);
-    //         } 
-    //         std::string tmp = value;
-    //         tmp += " ";
-    //         tmp += line.substr(0,index);
-    //         line = line.substr(index+1,line.length());
-    //         server_1.error_page.push_back(tmp);
-    //     }
-    //     else 
-    //     return(0);
-        
-    // }
-    // return (1);
 bool find_root(std::string line, location &server_1,std::string target)
 {
     int end = 0;
@@ -404,7 +362,8 @@ bool find_location(std::string line, server_rule &server_1)
                     }
                 }
                 target = line.substr(0,q);
-                fill_rule_location(line,loc,target);
+                if (!fill_rule_location(line, loc, target))
+                    return false;
                 server_1.location_map[target] = loc;
         }
         else 
@@ -510,7 +469,7 @@ void print_server_rule(std::vector<server_rule> servers)
 
     std::cout << "\n==============================\n";
 }
-bool fill_rule_server(std::vector<std::string> &spilt_server)
+bool fill_rule_server(std::vector<std::string> &spilt_server, std::vector<server_rule> &servers)
 {
     for (long unsigned int i = 0; i < spilt_server.size(); i++)
     {
@@ -560,13 +519,13 @@ void print_spilt_server(std::vector<std::string> spilt_server)
         std::cout << spilt_server[i] << std::endl; 
     }
 }
-bool fill_configuration(std::string file){
+std::vector<server_rule> fill_configuration(std::string file){
     file = remove_spaces(file);
+    std::vector<std::string> spilt_server;
+    std::vector<server_rule> servers;
     ft_split_servers(file, spilt_server);
-    fill_rule_server(spilt_server);
-    if (servers.size() != 0)
-        return(1);
-    return(0);
+    fill_rule_server(spilt_server,servers);
+    return(servers);
 }
 std::vector<server_rule>  read_configuration(std::string file_name)
 {
@@ -582,7 +541,39 @@ std::vector<server_rule>  read_configuration(std::string file_name)
         line += buf;
         line += "\n";
     }
-    fill_configuration(line);
-    // print_server_rule(servers);
+    std::vector<server_rule> servers = fill_configuration(line);
     return (servers);
+}
+bool validate_servers(std::vector<server_rule> &servers)
+{
+    for (size_t i = 0; i < servers.size(); i++)
+    {
+        if (servers[i].listen_port <= 0 || servers[i].listen_port > 65535)
+        {
+            std::cout << "Invalid port\n";
+            return false;
+        }
+
+        if (servers[i].location_map.empty())
+        {
+            std::cout << "Server must contain at least one location\n";
+            return false;
+        }
+
+        std::map<std::string, location>::iterator it =
+            servers[i].location_map.begin();
+
+        while (it != servers[i].location_map.end())
+        {
+            if (it->second.root.empty() && it->second.upload_path.empty())
+            {
+                std::cout << "Location must have root or upload_path\n";
+                return false;
+            }
+
+            ++it;
+        }
+    }
+
+    return true;
 }

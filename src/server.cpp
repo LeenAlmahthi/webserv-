@@ -10,24 +10,6 @@
 #include <unistd.h>
 #include <iostream>
 
-// Server::Server()
-// {
-// 	// std::cout << "\n# of server is:\n" << servers.size() ;
-// 	print_server_rule(servers);
-// 	read_server = 0;
-// 	while (read_server < servers.size())
-// 	{
-// 		// std::cout << "Accept a clinet in this port : " << port_[num_socket]<< "\n";
-// 		// port_.push_back(servers[read_server].listen_port);
-// 		setup_socket();
-// 		rebuild_poll_fds();
-// 		read_server++;		
-// 		// num_socket++;
-// 	}
-// 	// std::cout << "Accept a clinet in this port : " << port_[num_socket]<< "\n";
-// 	// setup_socket();
-// 	// rebuild_poll_fds();
-// }
 Server::Server(std::vector<server_rule> q)
 {
 	servers = q;
@@ -35,24 +17,12 @@ Server::Server(std::vector<server_rule> q)
 	read_server = 0;
 	while (read_server < servers.size())
 	{
-		// std::cout << "Accept a clinet in this port : " << port_[num_socket]<< "\n";
-		// port_.push_back(servers[read_server].listen_port);
 		setup_socket();
 		rebuild_poll_fds();
 		read_server++;		
-		// num_socket++;
 	}
 	
 }
-// void Server::add_port(int port)
-// {
-// 	port_.push_back(port);
-// 	// std::cout << "Accept a clinet in this port : " << port_[num_socket]<< "\n";
-// 	setup_socket();
-// 	rebuild_poll_fds();
-// 	num_socket++;
-// }
-
 Server::~Server()
 {
 	for (long unsigned int i =0;i<fd_.size();i++)
@@ -220,13 +190,7 @@ void Server::accept_new_clients(int fd)
 		Client client;
 		client.fd = client_fd;
 		client.closing = false;
-		// std::map<int, int>::iterator it = port_fd.find(fd);
-		// if (it == port_fd.end())
-		// 	return ;
-		// else 
-		// 	client.port = it->second;
 		clients_[client_fd] = client; // this is the map fd -> key && data -> client 
-		// std::cout << "port client" <<client.port << "\n";
 	}
 }
 
@@ -241,24 +205,62 @@ void Server::close_client(int fd)
 
 std::string Server::build_basic_response() const
 {
-	const std::string body = "<html><body><h1>webserv:8081</h1></body></html>";
-	std::ostringstream length;
-	length << body.size();
-	std::string resp;
-	resp += "HTTP/1.1 200 OK\r\n";
-	resp += "Content-Type: text/html\r\n";
-	resp += "Content-Length: ";
-	resp += length.str();
-	resp += "\r\n";
-	resp += "Connection: close\r\n";
-	resp += "\r\n";
-	resp += body;
-	return resp;
+    const std::string body =
+        "<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<title>Webserv</title>"
+        "<meta charset='UTF-8'>"
+        "<style>"
+        "body{margin:0;font-family:Arial,Helvetica,sans-serif;"
+        "background:linear-gradient(135deg,#0f172a,#1e293b);"
+        "color:white;height:100vh;display:flex;align-items:center;"
+        "justify-content:center;}"
+        ".card{background:#020617;padding:50px;border-radius:15px;"
+        "box-shadow:0 10px 40px rgba(0,0,0,0.5);text-align:center;width:420px;}"
+        "h1{font-size:42px;margin-bottom:10px;color:#38bdf8;}"
+        "p{color:#94a3b8;font-size:18px;margin-bottom:30px;}"
+        ".status{padding:10px 20px;background:#22c55e;border-radius:20px;"
+        "font-weight:bold;display:inline-block;margin-bottom:20px;}"
+        ".info{background:#0f172a;padding:15px;border-radius:8px;"
+        "margin-top:20px;font-size:14px;color:#cbd5f5;}"
+        ".footer{margin-top:30px;font-size:12px;color:#64748b;}"
+        "</style>"
+        "</head>"
+        "<body>"
+        "<div class='card'>"
+        "<h1>🚀 Webserv</h1>"
+        "<div class='status'>Server Running</div>"
+        "<p>Your custom HTTP server is working perfectly.</p>"
+        "<div class='info'>"
+        "<b>Project:</b> 42 Webserv<br>"
+        "<b>Protocol:</b> HTTP/1.1<br>"
+        "<b>Status:</b> OK"
+        "</div>"
+        "<div class='footer'>Built with C++ & poll()</div>"
+        "</div>"
+        "</body>"
+        "</html>";
+
+    std::ostringstream length;
+    length << body.size();
+
+    std::string resp;
+    resp += "HTTP/1.1 200 OK\r\n";
+    resp += "Content-Type: text/html\r\n";
+    resp += "Content-Length: ";
+    resp += length.str();
+    resp += "\r\n";
+    resp += "Connection: close\r\n";
+    resp += "Server: webserv/1.0\r\n";
+    resp += "\r\n";
+    resp += body;
+
+    return resp;
 }
 
 void Server::handle_client_read(int fd)
 {
-	// std::cout  << "leen was here \n";
 	std::map<int, Client>::iterator it = clients_.find(fd);
 	if (it == clients_.end())
 		return;
@@ -326,7 +328,6 @@ void Server::run()
 			throw std::runtime_error("poll failed");
 		for (size_t i = 0; i < poll_fds_.size(); ++i)
 		{
-			// std::cout << "read request\n";
 			int fd = poll_fds_[i].fd;
 			short revents = poll_fds_[i].revents;
 			if (revents == 0)
@@ -335,7 +336,6 @@ void Server::run()
 			{
 				if ( poll_fds_[i].revents & POLLIN) // this is use a bitwise 
 					{
-						// std::cout << "Accept a clinet in this port : " << fd_[j] << port_[num_socket]<< "\n";
 						accept_new_clients(poll_fds_[i].fd);
 						continue;
 					}
@@ -359,3 +359,4 @@ void Server::run()
 		}
 	}
 }
+
