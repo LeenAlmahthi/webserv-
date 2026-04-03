@@ -1,14 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include <map>
-#include <string>
-#include <vector>
-#include <poll.h>
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
-#include <iostream>
+#include "configuration.hpp"
 
 struct Client
     {
@@ -17,23 +10,6 @@ struct Client
         std::string out; // response (send) {segment segment segment segment} // nar  -> client? 
         std::string status;
         bool closing; // yes  
-    };
-    struct location{
-        std::string root;
-        std::string index;
-        std::vector<std::string>method;
-        std::vector<std::string>cgi;
-        std::string upload_path;
-        bool autoindex;
-        int ft_return;
-    };
-    struct server_rule{
-        std::string listen_ip;
-        int listen_port;
-        int port;
-        std::string max_body_size;
-        std::vector<std::string> error_page;
-        std::map<std::string,location> location_map;
     };
     class Server
     {
@@ -58,13 +34,14 @@ struct Client
             std::string build_basic_response() const;
             static int set_nonblocking(int fd);
 };
-bool    validate_servers(std::vector<server_rule> &servers);
-std::vector<server_rule> read_configuration(std::string file_name);
- std::vector<server_rule> fill_configuration(std::string file_name);
-std::string remove_spaces(std::string file);
-bool fill_rule_server(std::vector<std::string> &spilt_server,std::vector<server_rule> &servers);
-void print_spilt_server(std::vector<std::string> spilt_server);
-bool find_location(std::string line, server_rule &server_1);
-bool find_root(std::string line, location &server_1,std::string target);
-void print_server_rule(std::vector<server_rule> servers);
+// bool    validate_servers(std::vector<server_rule> &servers);
+// bool    valid_configuration(std::string file_name);
+// std::vector<server_rule> read_configuration(std::string file_name);
+//  std::vector<server_rule> fill_configuration(std::string file_name);
+// std::string remove_spaces(std::string file);
+// bool fill_rule_server(std::vector<std::string> &spilt_server,std::vector<server_rule> &servers);
+// void print_spilt_server(std::vector<std::string> spilt_server);
+// bool find_location(std::string line, server_rule &server_1);
+// bool find_root(std::string line, location &server_1,std::string target);
+// void print_server_rule(std::vector<server_rule> servers);
 #endif
