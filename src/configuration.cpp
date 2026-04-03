@@ -23,6 +23,13 @@ void print_server_rule(std::vector<server_rule> servers)
                 std::cout << "   - " << servers[i].error_page[j] << "\n";
         }
 
+        if (!servers[i].server_name.empty())
+        {
+            std::cout << "Server names : ";
+                std::cout << servers[i].server_name;
+                            std::cout << "\n";
+        }
+
         std::cout << "\nLocations\n";
         std::cout << "------------------------------\n";
 
@@ -267,6 +274,29 @@ bool find_return(std::string line, location &loc)
 
     return true;
 }
+
+
+bool server_name(std::string line, server_rule &srv)
+{
+     size_t pos = line.find("server_name");
+    if (pos == std::string::npos)
+        return true;
+
+    size_t end = line.find(';', pos + 1);
+    if (end == std::string::npos)
+        return false;
+
+    std::string raw = line.substr(pos + 12, end - (pos + 12));
+    if (raw.empty())
+        return false;
+
+    if (line.find("server_name", end) != std::string::npos)
+        return false;
+        
+    srv.server_name = raw;
+    return true;
+}
+
 bool find_listen(std::string line, server_rule &server_1)
 {
     if (line.find("listen") == std::string::npos)
@@ -490,6 +520,7 @@ bool is_allowed(const std::string &key)
     const std::string allowed[] = {
         "server",
         "listen",
+        "server_name",
         "client_max_body_size",
         "error_page",
         "location",
@@ -541,12 +572,9 @@ bool is_allowed(const std::string &key)
 }
 std::vector<server_rule> fill_configuration(std::string file)
 {
-    
     std::vector<std::string> blocks;
     std::vector<server_rule> servers;
-    
-    file = remove_spaces(file);
-    
+
     if (!ft_split_servers(file, blocks))
         return std::vector<server_rule>();
 
@@ -559,15 +587,19 @@ std::vector<server_rule> fill_configuration(std::string file)
     for (size_t i = 0; i < blocks.size(); i++)
     {
         server_rule srv;
-        if (has_forbidden(blocks[i]))
+        std::string normalized_block = remove_spaces(blocks[i]);
+        
+        if (!server_name(blocks[i], srv))
             return std::vector<server_rule>();
-        if (!find_listen(blocks[i], srv)) 
+        if (has_forbidden(normalized_block))
             return std::vector<server_rule>();
-        else if (!find_max_body(blocks[i], srv)) 
+        if (!find_listen(normalized_block, srv))
             return std::vector<server_rule>();
-        else if (!find_error_page(blocks[i], srv)) 
+        else if (!find_max_body(normalized_block, srv))
             return std::vector<server_rule>();
-        else if (!find_location(blocks[i], srv)) 
+        else if (!find_error_page(normalized_block, srv))
+            return std::vector<server_rule>();
+        else if (!find_location(normalized_block, srv))
             return std::vector<server_rule>();
         servers.push_back(srv);
     }

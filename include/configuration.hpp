@@ -27,7 +27,7 @@ struct location
     std::vector<std::string> cgi;
     std::string upload_path;
     bool autoindex;
-      int return_code;
+    int return_code;
     std::string return_url;
     bool has_return;
 
@@ -39,6 +39,7 @@ struct server_rule
     std::string listen_ip;
     int listen_port;
     int port;
+    std::string server_name;
     std::string max_body_size;
     std::vector<std::string> error_page;
     std::map<std::string, location> location_map;
@@ -62,6 +63,7 @@ void print_server_rule(std::vector<server_rule> servers);
 // ======================= SERVER PARSING =======================
 
 bool find_listen(std::string line, server_rule &server_1);
+bool server_name(std::string line, server_rule &server_1);
 bool find_max_body(std::string line, server_rule &server_1);
 bool find_error_page(std::string line, server_rule &server_1);
 bool find_location(std::string line, server_rule &server_1);
