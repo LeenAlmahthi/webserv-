@@ -2,21 +2,25 @@ NAME      = webserv
 CXX       = c++
 CXXFLAGS  = -Wall -Wextra -Werror -std=c++98
 
-SRC_PATH  = src/
-OBJ_PATH  = build/
-INCLUDE   = include/
+SRC_PATH  = src
+OBJ_PATH  = build
+INCLUDE   = -Iinclude
 
-SRC_FILES = main
+SRC_FILES = main \
+			configuration \
+			server \
+			Client \
+			HttpRequest
 
-SRC       = $(addprefix $(SRC_PATH), $(SRC_FILES:=.cpp))
-OBJ       = $(addprefix $(OBJ_PATH), $(SRC_FILES:=.o))
+SRC       = $(addprefix $(SRC_PATH)/, $(SRC_FILES:=.cpp))
+OBJ       = $(addprefix $(OBJ_PATH)/, $(SRC_FILES:=.o))
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ $(OBJ)
 
-$(OBJ_PATH)/%.o: %.cpp | $(OBJ_PATH)
+$(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp | $(OBJ_PATH)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
 
 $(OBJ_PATH):
