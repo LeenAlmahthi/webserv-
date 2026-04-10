@@ -129,7 +129,7 @@ bool is_cgi_script(const std::string& path)
 std::string normalize_path(const std::string& root, const std::string& request_path)
 {
     char root_resolved[PATH_MAX];
-    if (realpath(root.c_str(), root_resolved) == std::string::nullptr) 
+    if (realpath(root.c_str(), root_resolved) == nullptr) 
         return "";
     std::string resolved_root(root_resolved);
     std::string combined = root + request_path;
