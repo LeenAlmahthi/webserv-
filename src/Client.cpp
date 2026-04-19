@@ -198,15 +198,28 @@ void process_request(HttpRequest &request, Client &client)
     size_t best_len = 0;
 
     for (std::map<std::string, location>::const_iterator it = client.server_conf->location_map.begin();
-         it != client.server_conf->location_map.end(); ++it)
+        it != client.server_conf->location_map.end(); ++it)
     {
         const std::string &prefix = it->first;
-        if (request.path.compare(0, prefix.size(), prefix) == 0 && prefix.size() >= best_len)
+        std::string clean_prefix = prefix;
+
+        if (!clean_prefix.empty() && clean_prefix[clean_prefix.size() - 1] == '{')
+            clean_prefix.erase(clean_prefix.size() - 1);
+
+        if (request.path.compare(0, clean_prefix.size(), clean_prefix) == 0
+            && clean_prefix.size() >= best_len)
         {
-            best_len = prefix.size();
+            best_len = clean_prefix.size();
             selected = it;
         }
-    }
+        std::cout << "Request: [" << request.path << "]\n";
+        std::cout << "Prefix:  [" << clean_prefix << "]\n";
+
+        if (request.path.compare(0, clean_prefix.size(), clean_prefix) == 0)
+            std::cout << "MATCH ✅\n";
+        else
+            std::cout << "NO MATCH ❌\n";
+        }
 
     if (selected == client.server_conf->location_map.end())
     {
