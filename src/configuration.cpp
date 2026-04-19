@@ -473,7 +473,7 @@ bool find_location(std::string line, server_rule &server_1)
         if (open == std::string::npos)
             return false;
 
-        std::string target = line.substr(1, open);
+        std::string target = line.substr(1, open -1);
         if (target.empty() || target[0] != '/')
         {
             std::cout << "Error: location must start with '/'" << std::endl;

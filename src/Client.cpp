@@ -256,50 +256,125 @@ std::string dechunk_body(const std::string& chunked)
     return dechunked;
 }
 //  ROUTE REQUEST 
-
 void route_request(HttpRequest &request, Client &client, const location &loc)
 {
-    std::string physical_path = normalize_path(loc.root, request.path);//////
-    if (physical_path.empty())
-     {
-        send_error_response(client, 404); 
+    // HANDLE REDIRECT FIRST
+    if (loc.has_return)
+    {
+        std::string status;
+
+        if (loc.return_code == 301)
+            status = "301 Moved Permanently";
+        else if (loc.return_code == 302)
+            status = "302 Found";
+        else
+            status = std::to_string(loc.return_code) + " Redirect";
+
+        std::string response =
+            "HTTP/1.1 " + status + "\r\n"
+            "Location: " + loc.return_url + "\r\n"
+            "Content-Length: 0\r\n"
+            "Connection: close\r\n"
+            "\r\n";
+
+        client.response_buffer.append(response);
         return;
     }
-    if (request.headers.count("transfer-encoding") && request.headers["transfer-encoding"] == "chunked") 
+
+    // NORMAL FILE ROUTE
+    std::string physical_path = normalize_path(loc.root, request.path);
+
+    if (physical_path.empty())
     {
-        
+        send_error_response(client, 404);
+        return;
+    }
+
+    // HANDLE CHUNKED BODY
+    if (request.headers.count("transfer-encoding") &&
+        request.headers["transfer-encoding"] == "chunked")
+    {
         if (is_cgi_script(physical_path))
         {
-            try 
+            try
             {
                 request.body = dechunk_body(request.body);
                 request.headers.erase("transfer-encoding");
-            } 
-            catch (...) 
+            }
+            catch (...)
             {
-                send_error_response(client, 400); 
+                send_error_response(client, 400);
                 return;
             }
-        } 
-        else 
+        }
+        else
         {
-            send_error_response(client, 501);  
+            send_error_response(client, 501);
             return;
         }
     }
-  
+
+    // CGI
     if (is_cgi_script(physical_path))
     {
-        // execute_cgi(request, client, physical_path); FOR SARRAAAAH AL3ASAL<3
+        // execute_cgi(request, client, physical_path);
         return;
     }
+
+    // DIRECTORY
     if (is_directory(physical_path))
     {
         handle_directory(client, physical_path);
         return;
     }
+
+    // STATIC FILE
     serve_static_file(client, physical_path);
-}
+} 
+
+// void route_request(HttpRequest &request, Client &client, const location &loc)
+// {
+//     std::string physical_path = normalize_path(loc.root, request.path);//////
+//     if (physical_path.empty())
+//      {
+//         send_error_response(client, 404); 
+//         return;
+//     }
+//     if (request.headers.count("transfer-encoding") && request.headers["transfer-encoding"] == "chunked") 
+//     {
+        
+//         if (is_cgi_script(physical_path))
+//         {
+//             try 
+//             {
+//                 request.body = dechunk_body(request.body);
+//                 request.headers.erase("transfer-encoding");
+//             } 
+//             catch (...) 
+//             {
+//                 send_error_response(client, 400); 
+//                 return;
+//             }
+//         } 
+//         else 
+//         {
+//             send_error_response(client, 501);  
+//             return;
+//         }
+//     }
+  
+//     if (is_cgi_script(physical_path))
+//     {
+//         // execute_cgi(request, client, physical_path); FOR SARRAAAAH AL3ASAL<3
+//         return;
+//     }
+//     if (is_directory(physical_path))
+//     {
+//         handle_directory(client, physical_path);
+//         return;
+//     }
+//     serve_static_file(client, physical_path);
+// }
 
 //  ERROR RESPONSES 
 void send_error_response(Client &client, int status_code) 
