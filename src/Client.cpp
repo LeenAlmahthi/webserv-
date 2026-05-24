@@ -1,4 +1,61 @@
 #include "Client.hpp"
+#include "CGIHandler.hpp"
+#include "UploadHandler.hpp"
+
+static std::string toString(size_t n)
+{
+    std::stringstream ss;
+    ss << n;
+    return ss.str();
+}
+
+static std::string toStringInt(int n)
+{
+    std::stringstream ss;
+    ss << n;
+    return ss.str();
+}
+
+static size_t stringToSizeT(const std::string& s, int base)
+{
+    char* end;
+    errno = 0;
+
+    unsigned long value = std::strtoul(s.c_str(), &end, base);
+
+    if (errno != 0 || end == s.c_str() || *end != '\0')
+        throw std::runtime_error("invalid number");
+
+    return static_cast<size_t>(value);
+}
+
+static std::string getStatusText(int status_code)
+{
+	if (status_code == 400) return "Bad Request";
+	if (status_code == 403) return "Forbidden";
+	if (status_code == 404) return "Not Found";
+	if (status_code == 405) return "Method Not Allowed";
+	if (status_code == 409) return "Conflict";
+	if (status_code == 413) return "Payload Too Large";
+	if (status_code == 500) return "Internal Server Error";
+	if (status_code == 501) return "Not Implemented";
+	if (status_code == 504) return "Gateway Timeout";
+	return "Error";
+}
+
+static bool read_file_to_string(const std::string& path, std::string& out)
+{
+	std::ifstream file(path.c_str(), std::ios::in | std::ios::binary);
+
+	if (!file.is_open())
+		return false;
+
+	std::ostringstream ss;
+	ss << file.rdbuf();
+	out = ss.str();
+
+	return true;
+}
 
 static size_t get_max_body_limit(const Client &client)
 {
@@ -6,7 +63,7 @@ static size_t get_max_body_limit(const Client &client)
     {
         try
         {
-            return std::stoul(client.server_conf->max_body_size);
+            return stringToSizeT(client.server_conf->max_body_size, 10);
         }
         catch (...)
         {
@@ -14,6 +71,37 @@ static size_t get_max_body_limit(const Client &client)
         }
     }
     return MAX_BODY_SIZE;
+}
+
+static std::string getFileExtension(const std::string& path)
+{
+	size_t pos = path.find_last_of('.');
+
+	if (pos == std::string::npos)
+		return "";
+
+	return path.substr(pos);
+}
+
+static std::string getCgiInterpreter(const location& loc, const std::string& path)
+{
+	std::string ext = getFileExtension(path);
+
+	for (size_t i = 0; i < loc.cgi.size(); i++)
+	{
+		size_t sep = loc.cgi[i].find(':');
+
+		if (sep == std::string::npos)
+			continue;
+
+		std::string configured_ext = loc.cgi[i].substr(0, sep);
+		std::string interpreter = loc.cgi[i].substr(sep + 1);
+
+		if (configured_ext == ext)
+			return interpreter;
+	}
+
+	return "";
 }
 
 //  STARRRTTTT 
@@ -30,8 +118,6 @@ void client_readable(Client &client)
     
     if (received_bytes < 0)
     {
-        if (errno == EAGAIN || errno == EWOULDBLOCK)
-             return;
         client.is_connected = false;
         return;
     }
@@ -117,24 +203,15 @@ std::string get_content_type(const std::string& path)
     return "application/octet-stream";
 }
 
-
-//  CGI DETECTION 
-
-bool is_cgi_script(const std::string& path) 
-{
-    return (ends_with(path, ".php") || ends_with(path, ".cgi") || ends_with(path, ".py"));
-}
-// PATH NORMALIZATION  
-
 std::string normalize_path(const std::string& root, const std::string& request_path)
 {
     char root_resolved[PATH_MAX];
-    if (realpath(root.c_str(), root_resolved) == nullptr) 
+    if (realpath(root.c_str(), root_resolved) == NULL) 
         return "";
     std::string resolved_root(root_resolved);
     std::string combined = root + request_path;
     char path_resolved[PATH_MAX];
-    if (realpath(combined.c_str(), path_resolved) == nullptr) 
+    if (realpath(combined.c_str(), path_resolved) == NULL) 
         return "";
 
     std::string resolved_path(path_resolved);
@@ -170,7 +247,7 @@ void process_request(HttpRequest &request, Client &client)
      {
         try 
         {
-            size_t body_size = std::stoul(request.headers["content-length"]);
+            size_t body_size = stringToSizeT(request.headers["content-length"], 10);
             if (body_size > max_body_limit)
             {  
                 send_error_response(client, 413);
@@ -214,7 +291,7 @@ void process_request(HttpRequest &request, Client &client)
         return;
     }
 
-    route_request(request, client, selected->second);
+    route_request(request, client, selected->second, selected->first);
 }
 
 std::string dechunk_body(const std::string& chunked)
@@ -230,7 +307,7 @@ std::string dechunk_body(const std::string& chunked)
         size_t semi = size_line.find(';');
         if (semi != std::string::npos)
      size_line = size_line.substr(0, semi);
-        size_t chunk_size = std::stoul(size_line, nullptr, 16);
+        size_t chunk_size = stringToSizeT(size_line, 16);
         if (chunk_size == 0) break;
         
         pos = terminator + 2;
@@ -244,83 +321,170 @@ std::string dechunk_body(const std::string& chunked)
 }
 //  ROUTE REQUEST 
 
-void route_request(HttpRequest &request, Client &client, const location &loc)
+void route_request(HttpRequest &request, Client &client, const location &loc, const std::string& location_prefix)
 {
-    std::string physical_path = normalize_path(loc.root, request.path);//////
+    if (!loc.method.empty())
+    {
+        bool allowed = false;
+        for (size_t i = 0; i < loc.method.size(); i++)
+        {
+            if (loc.method[i] == request.method)
+            {
+                allowed = true;
+                break;
+            }
+        }
+        if (!allowed)
+        {
+            send_error_response(client, 405);
+            return;
+        }
+    }
+    // HANDLE REDIRECT FIRST
+    if (loc.has_return)
+    {
+        if (loc.return_code >= 300 && loc.return_code < 400)
+        {
+            if (loc.return_url.empty())
+            {
+                send_error_response(client, 500);
+                return;
+            }
+
+            std::string status;
+
+            if (loc.return_code == 301)
+                status = "301 Moved Permanently";
+            else if (loc.return_code == 302)
+                status = "302 Found";
+            else
+                status = toStringInt(loc.return_code) + " Redirect";
+
+            std::string response =
+                "HTTP/1.1 " + status + "\r\n"
+                "Location: " + loc.return_url + "\r\n"
+                "Content-Length: 0\r\n"
+                "Connection: close\r\n"
+                "\r\n";
+
+            client.response_buffer.append(response);
+            return;
+        }
+
+        send_error_response(client, loc.return_code);
+        return;
+    }
+    if (request.headers.count("transfer-encoding") && request.headers["transfer-encoding"] == "chunked") 
+    {
+        try 
+        {
+            request.body = dechunk_body(request.body);
+            request.headers.erase("transfer-encoding");
+            request.headers["content-length"] = toString(request.body.size());
+
+            size_t max_body_limit = get_max_body_limit(client);
+
+            if (request.body.size() > max_body_limit)
+            {
+                send_error_response(client, 413);
+                return;
+            }
+        }
+        catch (...) 
+        {
+            send_error_response(client, 400); 
+            return;
+        }
+    }
+
+    std::string relative_path = request.path;
+
+    if (location_prefix != "/" && request.path.compare(0, location_prefix.size(), location_prefix) == 0)
+    {
+        relative_path = request.path.substr(location_prefix.size());
+
+        if (relative_path.empty())
+            relative_path = "/";
+    }
+
+    std::string physical_path = normalize_path(loc.root, relative_path);
+
+    if (request.method == "POST" && !(loc.upload_path.empty()))
+    {
+        UploadHandler   upload;
+        upload.handle(request, client, loc, location_prefix);
+        return;
+    }
     if (physical_path.empty())
      {
         send_error_response(client, 404); 
         return;
     }
-    if (request.headers.count("transfer-encoding") && request.headers["transfer-encoding"] == "chunked") 
+
+    std::string interpreter = getCgiInterpreter(loc, physical_path);
+    if (!interpreter.empty())
     {
-        
-        if (is_cgi_script(physical_path))
-        {
-            try 
-            {
-                request.body = dechunk_body(request.body);
-                request.headers.erase("transfer-encoding");
-            } 
-            catch (...) 
-            {
-                send_error_response(client, 400); 
-                return;
-            }
-        } 
-        else 
-        {
-            send_error_response(client, 501);  
-            return;
-        }
+        CGIHandler cgi;
+        cgi.run(request, client, physical_path, interpreter);
+        return;
     }
-  
-    if (is_cgi_script(physical_path))
+    if (request.method == "DELETE")
     {
-        // execute_cgi(request, client, physical_path); FOR SARRAAAAH AL3ASAL<3
+        handle_delete(client, physical_path);
         return;
     }
     if (is_directory(physical_path))
     {
-        handle_directory(client, physical_path);
+        handle_directory(client, physical_path, loc);
         return;
     }
     serve_static_file(client, physical_path);
 }
 
 //  ERROR RESPONSES 
-void send_error_response(Client &client, int status_code) 
+void send_error_response(Client& client, int status_code)
 {
-    std::string status_text;
-    std::string body;
+	std::string status_text = getStatusText(status_code);
+	std::string body;
 
-    if(status_code == 400)
-        status_text = "Bad Request";
-    else if(status_code == 403)
-        status_text = "Forbidden";
-    else if(status_code == 404)
-        status_text = "Not Found";
-    else if(status_code == 405)
-        status_text = "Method Not Allowed";
-    else if(status_code == 413)
-        status_text = "Payload Too Large";
-    else if(status_code == 500)
-        status_text = "Internal Server Error";
-    else
-        status_text = "Error";
+	bool custom_page_found = false;
 
-    std::string status_line = std::to_string(status_code) + " " + status_text;
+	if (client.server_conf)
+	{
+		for (size_t i = 0; i < client.server_conf->error_page.size(); i++)
+		{
+			std::stringstream ss(client.server_conf->error_page[i]);
+			int code;
+			std::string path;
 
-    body = "<html><head><title>" + status_line + "</title></head><body><h1>" + status_line + "</h1></body></html>";
+			ss >> code >> path;
 
-    std::string response =
-        "HTTP/1.1 " + status_line + "\r\n"
-        "Content-Type: text/html\r\n"
-        "Content-Length: " + std::to_string(body.size()) + "\r\n"
-        "Connection: close\r\n"
-        "\r\n" + body;
+			if (code == status_code && !path.empty())
+			{
+				if (read_file_to_string(path, body))
+					custom_page_found = true;
+				break;
+			}
+		}
+	}
 
-    client.response_buffer.append(response);
+	if (!custom_page_found)
+	{
+		body = "<html><head><title>" + toStringInt(status_code) + " " + status_text +
+			   "</title></head><body><h1>" + toStringInt(status_code) + " " +
+			   status_text + "</h1></body></html>";
+	}
+
+	std::string response;
+
+	response += "HTTP/1.1 " + toStringInt(status_code) + " " + status_text + "\r\n";
+	response += "Content-Type: text/html\r\n";
+	response += "Content-Length: " + toString(body.size()) + "\r\n";
+	response += "Connection: close\r\n";
+	response += "\r\n";
+	response += body;
+
+	client.response_buffer.append(response);
 }
 
 //  STATIC FILES 
@@ -368,7 +532,7 @@ void serve_static_file( Client &client, const std::string& path)
     std::string response = 
         "HTTP/1.1 200 OK\r\n"
         "Content-Type: " + get_content_type(path) + "\r\n"
-        "Content-Length: " + std::to_string(st.st_size) + "\r\n"
+        "Content-Length: " + toString(st.st_size) + "\r\n"
         "Connection: close\r\n"  
         "\r\n";
     
@@ -378,12 +542,34 @@ void serve_static_file( Client &client, const std::string& path)
     client.response_buffer.append(response);
 }
 
-void handle_directory(Client &client, const std::string& dir_path)
+void handle_directory(Client& client, const std::string& path, const location& loc)
 {
-   
+   if (!loc.index.empty())
+    {
+        std::string index_path = path;
+
+        if (!index_path.empty() && index_path[index_path.size() - 1] != '/')
+            index_path += "/";
+
+        index_path += loc.index;
+
+        if (access(index_path.c_str(), F_OK) == 0)
+        {
+            serve_static_file(client, index_path);
+            return;
+        }
+    }
+
+    if (!loc.autoindex)
+    {
+        send_error_response(client, 403);
+        return;
+    }
+
+    // directory listing
     std::string html = "<html><body><h1>Directory Listing</h1><ul>\r\n";
     
-    DIR* dir = opendir(dir_path.c_str());
+    DIR* dir = opendir(path.c_str());
     if (!dir) 
     {
         send_error_response(client, 403);
@@ -405,7 +591,7 @@ void handle_directory(Client &client, const std::string& dir_path)
     std::string response = 
         "HTTP/1.1 200 OK\r\n"
         "Content-Type: text/html\r\n"
-        "Content-Length: " + std::to_string(html.length()) + "\r\n"
+        "Content-Length: " + toString(html.length()) + "\r\n"
         "Connection: close\r\n"
         "\r\n";
     response.append(html);
@@ -413,8 +599,32 @@ void handle_directory(Client &client, const std::string& dir_path)
     client.response_buffer.append(response);
 }
 
-void execute_cgi(Client &client)
+void handle_delete(Client& client, const std::string& path)
 {
-//    FOR SARRAAAAH AL3ASAL<3
-    send_error_response(client, 501); 
+    struct stat st;
+
+    if (stat(path.c_str(), &st) < 0)
+    {
+        send_error_response(client, 404);
+        return;
+    }
+    if (S_ISDIR(st.st_mode))
+    {
+        send_error_response(client, 403);
+        return;
+    }
+    if (unlink(path.c_str()) < 0)
+    {
+        send_error_response(client, 500);
+        return;
+    }
+
+    // build response
+    std::string response = 
+        "HTTP/1.1 204 No Content\r\n"
+        "Content-Length: 0\r\n"
+        "Connection: close\r\n"
+        "\r\n";
+    
+    client.response_buffer.append(response);
 }

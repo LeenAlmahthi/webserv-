@@ -1,5 +1,10 @@
 #include "server.hpp"
+#include "CGIHandler.hpp"
 
+#include <sys/types.h>
+#include <sys/wait.h>
+
+extern bool g_running;
 
 Server::Server(std::vector<server_rule> q)
 {
@@ -84,85 +89,62 @@ void Server::setup_socket()
 
 void Server::rebuild_poll_fds()
 {
-	poll_fds_.clear(); //Clear old list
-	for (long unsigned int i=0; i < fd_.size();i++)
+	poll_fds_.clear();
+	fd_to_client.clear();
+
+	// server sockets
+	for (size_t i = 0; i < fd_.size(); i++)
 	{
 		pollfd pfd;
 		pfd.fd = fd_[i];
-		pfd.events = POLLIN; // a client is waiting in accept queue 
-		pfd.revents = 0; // it will fill with os 
-		poll_fds_.push_back(pfd); // this is the server
-		// std::cout << "poll is :" << fd_[i] << " __ " ;
+		pfd.events = POLLIN;
+		pfd.revents = 0;
+		poll_fds_.push_back(pfd);
 	}
-	// std::cout << "#_ " << fd_.size() << "\n";
+
+	// clients + CGI
 	std::map<int, Client>::iterator it = clients_.begin();
 	while (it != clients_.end())
 	{
-			pollfd cfd;
-			cfd.fd = it->first;
-			cfd.events = POLLIN ;
-			cfd.revents = 0;
-			if (!it->second.response_buffer.empty())
-				cfd.events |= POLLOUT;
-		/*POLLIN → client sent request → I should read
-		POLLOUT → socket ready → I should send response*/
-			poll_fds_.push_back(cfd);
-			++it;
+		Client& c = it->second;
+
+		// client socket
+		pollfd cfd;
+		cfd.fd = c.socket_fd;
+		cfd.events = POLLIN;
+		if (!c.response_buffer.empty())
+			cfd.events |= POLLOUT;
+		cfd.revents = 0;
+
+		poll_fds_.push_back(cfd);
+		fd_to_client[c.socket_fd] = &c;
+
+		// CGI stdin (WRITE to CGI)
+		if (c.is_cgi && c.cgi_stdin_fd != -1)
+		{
+			pollfd p;
+			p.fd = c.cgi_stdin_fd;
+			p.events = POLLOUT;
+			p.revents = 0;
+
+			poll_fds_.push_back(p);
+			fd_to_client[c.cgi_stdin_fd] = &c;
 		}
-	/*\
-	vector -> array -> vector <int> leen(98);
-	leen[0] = 9; // 
-	leen.size(); 
-	leen.push_back(9); {9}
-	leen.push_back(8); {9,8,}
-	map <int ,int >nar key -> data ;
-	nar[8] = 7;
-	nar[0] = -7;
-	nar[8] = 76;
-	nar[0] = -76;
-	0 -> -7;
-	8 -> 7;
-	map <int ,int>::iterator q = nar.begin(); [map.begin() map.end() map.find(0)];
-	map <int ,int>::iterator q = map.find(0) ; [0,-7]
-	q->first ; // 0; [first,second]
-	q->second; // -7;
-	while (it != end ())
-	map<int,client> client;
-	map[5];
-	clinet nar;
-	nar.fd = 5;
-	nar.in = "leen";
-	nar.out  = "nar";
-	nar.port = 8080;
-	map[5] = nar;
-	map<int,client>::iterator q = nar.find(5);
-	q->second.port; // 8080
-	struct vector map unordermap 
 
+		// CGI stdout (READ from CGI)
+		if (c.is_cgi && c.cgi_stdout_fd != -1)
+		{
+			pollfd p;
+			p.fd = c.cgi_stdout_fd;
+			p.events = POLLIN | POLLHUP;
+			p.revents = 0;
 
+			poll_fds_.push_back(p);
+			fd_to_client[c.cgi_stdout_fd] = &c;
+		}
 
-	clients_
-   |
-   |----[5]----> Client
-   |               fd = 5
-   |               in = "GET /"
-   |               out = ""
-   |               close = false
-   |
-   |----[8]----> Client
-   |               fd = 8
-   |               in = ""
-   |               out = "HTTP/1.1 200 OK..."
-   |               close = false
-   |
-   |----[12]---> Client
-                   fd = 12
-                   in = ""
-                   out = ""
-                   close = true*/
-	/*First I add the server socket to poll so I know when a new connection arrives.
-	Then I add every client socket so poll notifies me when a client is ready
-	to read a request or ready to send a response.*/
+		++it;
+	}
 }
 
 void Server::accept_new_clients(int fd)
@@ -197,6 +179,8 @@ void Server::close_client(int fd)
 	std::map<int, Client>::iterator it = clients_.find(fd);
 	if (it == clients_.end())
 		return;
+	if (it->second.is_cgi || it->second.cgi_pid > 0)
+		CGIHandler::cleanupCGI(it->second, true);
 	close(fd);
 	clients_.erase(it);
 }
@@ -234,20 +218,32 @@ void Server::handle_client_write(int fd)
 	std::map<int, Client>::iterator it = clients_.find(fd);
 	if (it == clients_.end())
 		return;
-	if (it->second.response_buffer.empty())
+
+	Client& client = it->second;
+
+	if (client.response_buffer.empty())
 		return;
 
-	int n = send(fd, it->second.response_buffer.c_str(), it->second.response_buffer.size(), 0);
-	if (n <= 0)
+	ssize_t n = send(fd, client.response_buffer.c_str(), client.response_buffer.size(), 0);
+
+	if (n < 0)
 	{
 		close_client(fd);
 		return;
 	}
 
-	it->second.response_buffer.erase(0, static_cast<size_t>(n));
-	if (it->second.response_buffer.empty())
+	if (n == 0)
+	{
+		close_client(fd);
+		return;
+	}
+
+	client.response_buffer.erase(0, static_cast<size_t>(n));
+
+	if (client.response_buffer.empty())
 		close_client(fd);
 }
+
 bool Server::is_port(int fd)
 {
 	for (long unsigned int j=0;j < fd_.size();j++)
@@ -265,45 +261,83 @@ void Server::print_ip_instdin()
 	}
 	std::cout <<"Server running with " << servers.size() <<" listening sockets\n";
 };
+
 void Server::run()
 {
 	print_ip_instdin();
-	while (true)
+
+	while (g_running)
 	{
 		rebuild_poll_fds();
-		if (poll(&poll_fds_[0], poll_fds_.size(), -1) < 0) // there are error in the sever 
+
+		if (poll(&poll_fds_[0], poll_fds_.size(), 1000) < 0)
+		{
+			if (errno == EINTR)
+				continue;
+
 			throw std::runtime_error("poll failed");
+		}
+
 		for (size_t i = 0; i < poll_fds_.size(); ++i)
 		{
 			int fd = poll_fds_[i].fd;
 			short revents = poll_fds_[i].revents;
+
 			if (revents == 0)
-    			continue;
-			if (is_port(poll_fds_[i].fd))
+				continue;
+
+			if (is_port(fd))
 			{
-				if ( poll_fds_[i].revents & POLLIN) // this is use a bitwise 
-					{
-						accept_new_clients(poll_fds_[i].fd);
-						continue;
-					}
-			}
-			if (poll_fds_[i].revents & (POLLERR | POLLHUP | POLLNVAL)) // If fd has error, hang-up, or invalid → close it
-			{
-				close_client(fd);
+				if (revents & POLLIN)
+					accept_new_clients(fd);
 				continue;
 			}
-			if (poll_fds_[i].revents & POLLIN)  // 0x005 & 0x001 = 0x001 → triggers
+
+			Client* client = NULL;
+			
+			if (fd_to_client.count(fd))
+				client = fd_to_client[fd];
+
+			if (!client)
+				continue;
+
+			if (fd == client->cgi_stdout_fd && (revents & (POLLIN | POLLHUP)))
+			{
+				CGIHandler::handleCGIRead(*client);
+				continue;
+			}
+
+			if (fd == client->cgi_stdin_fd && (revents & POLLOUT))
+			{
+				CGIHandler::handleCGIWrite(*client);
+				continue;
+			}
+
+			if (fd == client->socket_fd && (revents & (POLLERR | POLLHUP | POLLNVAL)))
+			{
+				close_client(client->socket_fd);
+				continue;
+			}
+
+			if (fd == client->socket_fd && (revents & POLLIN) && !client->is_cgi)
 			{
 				std::cout << "read request\n";
 				handle_client_read(fd);
+				continue;
 			}
-				
-			if (poll_fds_[i].revents & POLLOUT) // // 0x005 & 0x004 = 0x004 → triggers 
+
+			if (fd == client->socket_fd && (revents & POLLOUT))
 			{
 				std::cout << "write client request\n";
 				handle_client_write(fd);
-			}	
+				continue;
+			}
+
+			if (client->is_cgi && time(NULL) - client->cgi_start_time > 5)
+			{
+				CGIHandler::cleanupCGI(*client, true);
+				send_error_response(*client, 504);
+			}
 		}
 	}
-
 }

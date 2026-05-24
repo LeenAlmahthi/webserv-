@@ -473,7 +473,7 @@ bool find_location(std::string line, server_rule &server_1)
         if (open == std::string::npos)
             return false;
 
-        std::string target = line.substr(1, open);
+        std::string target = line.substr(1, open -1);
         if (target.empty() || target[0] != '/')
         {
             std::cout << "Error: location must start with '/'" << std::endl;
@@ -482,8 +482,14 @@ bool find_location(std::string line, server_rule &server_1)
         location loc;
         if (!fill_rule_location(line, loc))
             return false;
-        
-        server_1.location_map[target] = loc;  // ← CRITICAL FIX
+
+        if (loc.root.empty() && loc.upload_path.empty() && !loc.has_return)
+        {
+            std::cout << "Error: missing root in location " << target << std::endl;
+            return false;
+        }
+
+        server_1.location_map[target] = loc;
 
         size_t close = line.find('}');
         if (close == std::string::npos)

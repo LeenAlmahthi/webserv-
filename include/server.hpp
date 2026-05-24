@@ -16,6 +16,7 @@
             std::vector<int> fd_;
             std::vector<pollfd> poll_fds_;
             std::map<int, Client> clients_;
+            std::map<int, Client*> fd_to_client;
             void setup_socket();
             void print_ip_instdin();
             bool is_port(int fd);
@@ -27,14 +28,4 @@
             std::string build_basic_response() const;
             static int set_nonblocking(int fd);
 };
-// bool    validate_servers(std::vector<server_rule> &servers);
-// bool    valid_configuration(std::string file_name);
-// std::vector<server_rule> read_configuration(std::string file_name);
-//  std::vector<server_rule> fill_configuration(std::string file_name);
-// std::string remove_spaces(std::string file);
-// bool fill_rule_server(std::vector<std::string> &spilt_server,std::vector<server_rule> &servers);
-// void print_spilt_server(std::vector<std::string> spilt_server);
-// bool find_location(std::string line, server_rule &server_1);
-// bool find_root(std::string line, location &server_1,std::string target);
-// void print_server_rule(std::vector<server_rule> servers);
 #endif
