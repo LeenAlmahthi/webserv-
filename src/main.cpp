@@ -1,10 +1,20 @@
 #include "server.hpp"
+#include "CGIHandler.hpp"
+
+#include <signal.h>
+
+bool g_running = true;
+
+void handle_sigint(int)
+{
+    g_running = false;
+}
 
 int main(int argc, char **argv)
 {
     if (argc != 2)
     {
-        std::cout << "Error: Enter file configuration\n";
+        std::cerr << "Usage: ./webserv <config_file>\n";
         return 1;
     }
 
@@ -18,7 +28,12 @@ int main(int argc, char **argv)
             return 1;
         }
         Server server(servers);
+        signal(SIGINT, handle_sigint);
         server.run();
+    }
+    catch (const ExitChild&)
+    {
+        return 1;
     }
     catch (const std::exception &ex)
     {

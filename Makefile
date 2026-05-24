@@ -10,7 +10,10 @@ SRC_FILES = main \
 			configuration \
 			server \
 			Client \
-			HttpRequest
+			HttpRequest \
+			CGIHandler \
+			HttpException \
+			UploadHandler \
 
 SRC       = $(addprefix $(SRC_PATH)/, $(SRC_FILES:=.cpp))
 OBJ       = $(addprefix $(OBJ_PATH)/, $(SRC_FILES:=.o))

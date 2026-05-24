@@ -15,6 +15,19 @@ void trim(std::string &str)
     str = str.substr(start, end - start + 1);
 }
 
+static size_t stringToSizeT(const std::string& s, int base)
+{
+    char* end;
+    errno = 0;
+
+    unsigned long value = std::strtoul(s.c_str(), &end, base);
+
+    if (errno != 0 || end == s.c_str() || *end != '\0')
+        throw std::runtime_error("invalid number");
+
+    return static_cast<size_t>(value);
+}
+
 ParsingResult parse_http_req(std::string &reqbuffer, HttpRequest &request, size_t &bytes_to_remove) 
 {
     // [1] Find header terminator
@@ -38,6 +51,18 @@ ParsingResult parse_http_req(std::string &reqbuffer, HttpRequest &request, size_
 
     if (request.method.empty() || request.path.empty() || request.http_version.empty())
         return PARSE_ERROR;
+
+    // QUERY SPLIT
+    std::string raw_path = request.path;
+    size_t pos = raw_path.find('?');
+    if (pos != std::string::npos)
+    {
+        request.path = raw_path.substr(0, pos);
+        request.query_string = raw_path.substr(pos + 1);
+    }
+    else
+        request.query_string = "";
+
     if (request.http_version != "HTTP/1.1" && request.http_version != "HTTP/1.0")
         return PARSE_ERROR;
     if (iss >> extra)
@@ -110,7 +135,7 @@ ParsingResult parse_http_req(std::string &reqbuffer, HttpRequest &request, size_
                 size_t chunk_size;
                 try 
                 { 
-                    chunk_size = std::stoul(size_str, nullptr, 16); 
+                    chunk_size = stringToSizeT(size_str, 16); 
                 }
                 catch (...) 
                 { 
@@ -136,35 +161,12 @@ ParsingResult parse_http_req(std::string &reqbuffer, HttpRequest &request, size_
             return PARSE_ERROR; // Unsupported transfer encoding
         }
     }
-    // else if (request.headers.count("content-length")) 
-    // {
-    //     size_t bodysize = 0;
-    //     try 
-    //     {
-    //         bodysize = std::stoul(request.headers["content-length"]);
-    //     }
-    //     catch (...) 
-    //     {
-    //         return PARSE_ERROR;
-    //     }
-
-    //     if (reqbuffer.size() < header_size + bodysize)
-    //         return PARSE_INCOMPLETE;
-
-    //     if (bodysize > 0)
-    //         request.body = reqbuffer.substr(header_size, bodysize);
-    //     else
-    //         request.body.clear();
-
-    //     bytes_to_remove = header_size + bodysize;
-    //     return PARSE_COMPLETE;
-    // }
     else if (request.headers.count("content-length")) 
 {
     size_t bodysize = 0;
     try 
     {
-        bodysize = std::stoul(request.headers["content-length"]);
+        bodysize = stringToSizeT(request.headers["content-length"], 10);
     }
     catch (...) 
     {

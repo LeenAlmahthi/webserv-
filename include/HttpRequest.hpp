@@ -6,20 +6,10 @@
 #include <string>
 #define MAX_BODY_SIZE (10 * 1024 * 1024)
 
-// struct HttpRequest 
-// {
-//     std::string method;
-//     std::string path;
-//     std::string http_version;
-//     std::map<std::string, std::string> headers;
-//     std::string body;
-//     bool is_chunked;  
-    
-//     HttpRequest() : is_chunked(false) {}
-// };
 struct HttpRequest {
     std::string method;
     std::string path;
+    std::string query_string;
     std::string http_version;
     std::map<std::string, std::string> headers;
     std::string body;
