@@ -122,8 +122,10 @@ void client_readable(Client &client)
         return;
     }
     
-    if (client.request_buffer.size() + received_bytes > 8192) 
+    size_t max_body_limit = get_max_body_limit(client);
+    if (client.request_buffer.size() + received_bytes > max_body_limit + 8192) 
     {
+        send_error_response(client, 413);
         client.is_connected = false;
         return;
     }
