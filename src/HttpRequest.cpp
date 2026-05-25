@@ -173,14 +173,7 @@ ParsingResult parse_http_req(std::string &reqbuffer, HttpRequest &request, size_
         return PARSE_ERROR;
     }
 
-    // ✅ FIX #1: Check size BEFORE completeness (critical for DoS prevention)
-    const size_t MAX_BODY_SIZOE = 10 * 1024 * 1024;  // 10MB hardcoded
-    if (bodysize > MAX_BODY_SIZOE) {
-        request.oversized_body = true;
-        return PARSE_ERROR;  // Reject immediately - no waiting for body
-    }
-
-    // ✅ FIX #2: Check body completeness AFTER size validation
+    // Check body completeness AFTER size validation
     if (reqbuffer.size() < header_size + bodysize)
         return PARSE_INCOMPLETE;
 

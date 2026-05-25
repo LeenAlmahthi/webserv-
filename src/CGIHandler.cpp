@@ -332,13 +332,6 @@ void CGIHandler::handleCGIRead(Client& client)
 		int status;
 		pid_t result = waitpid(client.cgi_pid, &status, WNOHANG);
 
-		if (result == 0)
-		{
-			CGIHandler::cleanupCGI(client, true);
-			send_error_response(client, 500);
-			return;
-		}
-
 		if (result == -1)
 		{
 			client.cgi_pid = -1;
