@@ -1,0 +1,22 @@
+Server running at http://localhost:3000
+POST /api/signup {
+  name: 'RunTest',
+  email: 'runtest@example.com',
+  password: 'Secret123'
+}
+POST /api/signup { name: 'nar', email: 'narjesalmasri330@gmail.com', password: '3232' }
+POST /api/signup { name: 'nar', email: 'narjesMohammad999@gmail.com', password: '3232' }
+POST /api/signup { name: 'leen', email: 'leenalmahthi@gmail.com', password: '1234' }
+POST /api/signup { name: 'n', email: 'n@gmail.com', password: '78967896' }
+POST /api/signup { name: 'x', email: 'x@gmail.com', password: '1234' }
+PayloadTooLargeError: request entity too large
+    at readStream (/Users/macbook/Desktop/gp/node_modules/raw-body/index.js:163:17)
+    at getRawBody (/Users/macbook/Desktop/gp/node_modules/raw-body/index.js:116:12)
+    at read (/Users/macbook/Desktop/gp/node_modules/body-parser/lib/read.js:114:3)
+    at jsonParser (/Users/macbook/Desktop/gp/node_modules/body-parser/lib/types/json.js:90:5)
+    at Layer.handleRequest (/Users/macbook/Desktop/gp/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/Users/macbook/Desktop/gp/node_modules/router/index.js:342:13)
+    at /Users/macbook/Desktop/gp/node_modules/router/index.js:297:9
+    at processParams (/Users/macbook/Desktop/gp/node_modules/router/index.js:582:12)
+    at next (/Users/macbook/Desktop/gp/node_modules/router/index.js:291:5)
+    at Function.handle (/Users/macbook/Desktop/gp/node_modules/router/index.js:186:3)

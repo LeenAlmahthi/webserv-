@@ -1,0 +1,14 @@
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(0deg,#2A7777 0%,#90B8C1 50%,#AEC7CB 99.04%);background-blend-mode:plus-lighter;backdrop-filter:blur(2px);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden}
+#fireworks-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.firework{position:fixed;width:12px;height:12px;border-radius:50%;pointer-events:none}
+.content{text-align:center;color:#fff;z-index:10;position:relative;opacity:0;animation:fadeIn 1s ease 2.5s forwards}
+h1{font-size:72px;font-weight:900;margin-bottom:20px;animation:slideUp 0.8s ease 3s both;letter-spacing:-2px}
+.subtitle{font-size:24px;color:rgba(255,255,255,0.9);margin-bottom:60px;animation:slideUp 0.8s ease 3.2s both}
+.card{background:rgba(255,255,255,0.1);backdrop-filter:blur(20px);padding:60px;border-radius:20px;max-width:600px;margin:0 auto;animation:slideUp 0.8s ease 3.4s both}
+.card h2{font-size:36px;margin-bottom:16px}
+.card p{font-size:18px;color:rgba(255,255,255,0.9);margin-bottom:40px}
+.btn{display:inline-block;padding:18px 48px;background:linear-gradient(135deg,#154552,#357a8e);color:#fff;text-decoration:none;border-radius:14px;font-weight:700;font-size:18px;transition:all 0.3s;border:none;cursor:pointer;box-shadow:0 10px 30px rgba(45,122,143,0.4)}
+.btn:hover{transform:translateY(-4px);box-shadow:0 15px 40px rgba(45,122,143,0.6)}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}

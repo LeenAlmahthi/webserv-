@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Tap to Build</title>
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <!-- SVG Gradient Definitions -->
+    <svg width="0" height="0">
+        <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#7eb3c4;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#9cc9d4;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <button class="close-btn" onclick="window.location.href='home_page.html'">×</button>
+
+    <div class="container">
+        <div class="profile-header">
+            <div class="avatar-section">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%237eb3c4;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%239cc9d4;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='50' fill='url(%23grad)'/%3E%3Ctext x='50' y='50' text-anchor='middle' dy='.3em' fill='white' font-size='40' font-family='Arial' font-weight='bold'%3EJ%3C/text%3E%3C/svg%3E" alt="User Avatar" class="avatar" id="userAvatar">
+                <label class="avatar-upload" for="avatarInput">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                </label>
+                <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+            </div>
+            <div class="user-info">
+                <h1 id="displayName">John Doe</h1>
+                <p id="displayEmail">john.doe@example.com</p>
+                <div class="user-stats">
+                    <div class="stat">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Projects</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Templates</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">28</div>
+                        <div class="stat-label">Days Active</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="card">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    Account Information
+                </h2>
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" value="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" value="john.doe@example.com">
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="saveChanges()">Save Changes</button>
+                    <button class="btn btn-secondary" onclick="logout()">Log Out</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                    Recent Activity
+                </h2>
+                <ul class="activity-list">
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        </div>
+                        <div class="activity-details">
+                            <div class="activity-title">Created new project <span class="activity-badge">New</span></div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+                        </div>
+                        <div class="activity-details">
+                            <div class="activity-title">Saved template <span class="activity-badge">Saved</span></div>
+                            <div class="activity-time">Yesterday</div>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 3H7a2 2 0 0 0-2 2v14l7-3 7 3V5a2 2 0 0 0-2-2zm-6.41 9.59L8 10l-1.59 1.59L5 11.17 8 8l2.59 2.59L11 11.17l-.41 1.42zM17 12h-5v-2h5v2zm0-4h-5V6h5v2z"/></svg>
+                        </div>
+                        <div class="activity-details">
+                            <div class="activity-title">Evaluation project <span class="activity-badge">Update</span></div>
+                            <div class="activity-time">3 days ago</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card projects-section">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-1 6h-3v3h-2v-3h-3v-2h3V7h2v3h3v2z"/></svg>
+                    Your Projects
+                </h2>
+                <div class="projects-grid">
+                    <div class="project-card new-project" onclick="createNewProject()">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        <p>Create New Project</p>
+                    </div>
+                    <div class="project-card" onclick="openSavedWebsite()">
+                        <div class="project-thumbnail saved-websites">
+                            <div class="saved-left">
+                                <div class="saved-main-badge">
+                                    <img id="savedMainLogo" alt="Last Website">
+                                </div>
+                                <div class="saved-meta">
+                                    <div class="saved-title">Saved websites</div>
+                                    <div class="saved-sub" id="savedCounts">0 sites • 0 evals</div>
+                                </div>
+                            </div>
+                            <div class="saved-right">
+                                <div class="ribbon-rail">
+                                    <div class="ribbon" id="ribbon0"></div>
+                                    <div class="ribbon" id="ribbon1"></div>
+                                    <div class="ribbon" id="ribbon2"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Saved websites</h3> 
+                            <div class="project-meta">
+                                <span id="savedMeta">Recently updated</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <div class="project-thumbnail last-template">
+                            <div class="template-badge">
+                                <img id="lastTemplateLogo" alt="Template Logo">
+                            </div>
+                            <div class="template-meta">
+                                <div class="template-name" id="lastTemplateName">Website name</div>
+                                <div class="template-user" id="lastTemplateUser">by You</div>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Last website</h3>
+                            <div class="project-meta">
+                                <span>Modified 5 days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="project-card" onclick="openSavedEvaluation()">
+                        <div class="evaluation-stack" id="evalStack">
+                            <div class="eval-card">
+                                <div class="eval-card-logo" id="logo0">📊</div>
+                                <div class="eval-card-name" id="name0">Eval</div>
+                            </div>
+                            <div class="eval-card">
+                                <div class="eval-card-logo" id="logo1">📈</div>
+                                <div class="eval-card-name" id="name1">Eval</div>
+                            </div>
+                            <div class="eval-card">
+                                <div class="eval-card-logo" id="logo2">✅</div>
+                                <div class="eval-card-name" id="name2">Eval</div>
+                            </div>
+                            <div class="eval-card">
+                                <div class="eval-card-logo" id="logo3">🎯</div>
+                                <div class="eval-card-name" id="name3">Eval</div>
+                            </div>
+                            <div class="eval-card">
+                                <div class="eval-card-logo" id="logo4">⭐</div>
+                                <div class="eval-card-name" id="name4">Eval</div>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Evaluation</h3>
+                            <div class="project-meta">
+                                <span id="evalCount">0 evaluations saved</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        // Singleton refs for notifications
+        let currentToast = null;
+        let toastTimer = null;
+        let currentConfirmToast = null;
+        // Quick create helper to auto-make a starter project
+        function quickCreateProject() {
+            try {
+                const websites = JSON.parse(localStorage.getItem('savedWebsites') || '[]');
+                const userEmail = sessionStorage.getItem('userEmail') || 'user@example.com';
+                const owner = (sessionStorage.getItem('userName') || (userEmail.split('@')[0] || 'User'));
+                const baseName = sessionStorage.getItem('appName') || sessionStorage.getItem('lastTemplateName') || 'New Website';
+                const ts = new Date();
+                const name = `${baseName} ${ts.getFullYear()}-${String(ts.getMonth()+1).padStart(2,'0')}-${String(ts.getDate()).padStart(2,'0')}`;
+
+                const lastLogo = sessionStorage.getItem('lastTemplateLogo') || sessionStorage.getItem('generatedLogo') || sessionStorage.getItem('uploadedLogo') || '';
+                const paletteRaw = sessionStorage.getItem('selectedPalette');
+                let palette = ['#7eb3c4','#9cc9d4'];
+                try {
+                    const p = JSON.parse(paletteRaw || 'null');
+                    if (p) {
+                        if (Array.isArray(p.colors)) palette = [p.colors[0], p.colors[1] || p.colors[0]];
+                        else if (Array.isArray(p)) palette = [p[0], p[1] || p[0]];
+                        else if (p.primary) palette = [p.primary, p.secondary || p.primary];
+                    }
+                } catch(_) {}
+
+                const id = Date.now();
+                const snapshot = {
+                    id,
+                    name,
+                    logo: lastLogo,
+                    palette,
+                    content: {},
+                    images: [],
+                    owner,
+                    createdAt: ts.toISOString()
+                };
+                websites.push(snapshot);
+                localStorage.setItem('savedWebsites', JSON.stringify(websites));
+
+                // Update session for Last website tile
+                sessionStorage.setItem('lastTemplateName', name);
+                if (lastLogo) sessionStorage.setItem('lastTemplateLogo', lastLogo);
+
+                // Inform user
+                if (typeof showToast === 'function') {
+                    showToast('Starter project created');
+                }
+            } catch (e) {
+                console.warn('Quick create failed:', e);
+            }
+        }
+        const displayName = document.getElementById('displayName');
+        const displayEmail = document.getElementById('displayEmail');
+        const fullNameInput = document.getElementById('fullName');
+        const emailInput = document.getElementById('email');
+        const avatarInput = document.getElementById('avatarInput');
+        const userAvatar = document.getElementById('userAvatar');
+        const lastTemplateLogo = document.getElementById('lastTemplateLogo');
+        const lastTemplateNameEl = document.getElementById('lastTemplateName');
+        const lastTemplateUserEl = document.getElementById('lastTemplateUser');
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function adjustColorOpacity(hex, opacity) {
+            const rgb = hexToRgb(hex);
+            return rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})` : hex;
+        }
+
+        function applyDynamicTheme() {
+            const selectedPaletteRaw = sessionStorage.getItem('selectedPalette');
+            if (!selectedPaletteRaw) return;
+            try {
+                const palette = JSON.parse(selectedPaletteRaw);
+                const colors = Array.isArray(palette.colors) ? palette.colors : null;
+                if (!colors || colors.length < 2) return;
+
+                const color1 = colors[0];
+                const color2 = colors[1];
+                const rgb1 = hexToRgb(color1);
+                const rgb2 = hexToRgb(color2);
+                if (!rgb1 || !rgb2) return;
+
+                const gradientBg = `linear-gradient(135deg, rgba(${rgb1.r}, ${rgb1.g}, ${rgb1.b}, 0.35) 0%, rgba(${rgb2.r}, ${rgb2.g}, ${rgb2.b}, 0.35) 100%)`;
+                const borderColor = adjustColorOpacity(color1, 0.5);
+
+                const lastCard = document.querySelector('.project-thumbnail.last-template');
+                if (lastCard) {
+                    lastCard.style.background = gradientBg;
+                    lastCard.style.borderColor = borderColor;
+                    lastCard.style.boxShadow = '0 12px 32px rgba(0,0,0,0.22)';
+                }
+
+                const badge = document.querySelector('.template-badge');
+                if (badge) {
+                    badge.style.background = gradientBg;
+                    badge.style.borderColor = borderColor;
+                }
+                const badgeImg = document.querySelector('.template-badge img');
+                if (badgeImg) badgeImg.style.background = gradientBg;
+
+                const meta = document.querySelector('.template-meta');
+                if (meta) meta.style.background = gradientBg;
+
+                // Tint evaluation stack and cards with selected palette
+                const evalStack = document.getElementById('evalStack');
+                if (evalStack) {
+                    const stackGradient = `linear-gradient(180deg, rgba(${rgb1.r}, ${rgb1.g}, ${rgb1.b}, 0.26) 0%, rgba(${rgb2.r}, ${rgb2.g}, ${rgb2.b}, 0.38) 100%)`;
+                    evalStack.style.background = stackGradient;
+                    evalStack.style.border = `1px solid ${borderColor}`;
+                    evalStack.style.boxShadow = 'inset 0 1px 2px rgba(255,255,255,0.3), inset 0 -2px 8px rgba(0,0,0,0.12)';
+
+                    const cards = evalStack.querySelectorAll('.eval-card');
+                    const logos = evalStack.querySelectorAll('.eval-card-logo');
+
+                    cards.forEach((card, idx) => {
+                        const baseHex = idx % 2 === 0 ? color1 : color2;
+                        const baseRgb = hexToRgb(baseHex);
+                        if (baseRgb) {
+                            const faceGradient = `linear-gradient(135deg, rgba(${baseRgb.r}, ${baseRgb.g}, ${baseRgb.b}, 0.55) 0%, rgba(${rgb2.r}, ${rgb2.g}, ${rgb2.b}, 0.45) 100%)`;
+                            card.style.background = faceGradient;
+                            card.style.border = `1px solid ${adjustColorOpacity(baseHex, 0.45)}`;
+                            card.style.boxShadow = '0 12px 28px rgba(0,0,0,0.28)';
+                        }
+                    });
+
+                    logos.forEach((logo) => {
+                        logo.style.background = adjustColorOpacity(color1, 0.5);
+                    });
+                }
+            } catch (e) {
+                console.warn('Failed to apply dynamic theme:', e);
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const icon = type === 'error'
+                ? '<svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>'
+                : '<svg viewBox="0 0 24 24"><path d="M9 16.2l-3.5-3.5L4 14.2 9 19l12-12-1.5-1.5z"/></svg>';
+
+            if (currentToast) {
+                currentToast.className = `toast-notification ${type}`;
+                const content = currentToast.querySelector('.toast-content');
+                const iconEl = currentToast.querySelector('.toast-icon');
+                if (content) content.textContent = message;
+                if (iconEl) iconEl.innerHTML = icon;
+                if (toastTimer) clearTimeout(toastTimer);
+            } else {
+                currentToast = document.createElement('div');
+                currentToast.className = `toast-notification ${type}`;
+                currentToast.innerHTML = `
+                    <div class="toast-icon">${icon}</div>
+                    <div class="toast-content">${message}</div>
+                `;
+                document.body.appendChild(currentToast);
+            }
+
+            toastTimer = setTimeout(() => {
+                if (!currentToast) return;
+                currentToast.classList.add('remove');
+                setTimeout(() => {
+                    currentToast?.remove();
+                    currentToast = null;
+                }, 300);
+            }, 3000);
+        }
+
+        function showConfirmToast(message, onConfirm) {
+            if (currentConfirmToast) {
+                const content = currentConfirmToast.querySelector('.toast-content');
+                if (content) content.textContent = message;
+                return; // Keep a single confirm toast
+            }
+            const toast = document.createElement('div');
+            toast.id = 'confirmToast';
+            toast.className = 'toast-notification';
+            toast.innerHTML = `
+                <div class="toast-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div>
+                <div class="toast-content">${message}</div>
+            `;
+            const actions = document.createElement('div');
+            actions.style.display = 'flex';
+            actions.style.gap = '10px';
+            const yes = document.createElement('button');
+            yes.textContent = 'Yes';
+            yes.style.padding = '8px 14px';
+            yes.style.border = 'none';
+            yes.style.borderRadius = '8px';
+            yes.style.fontWeight = '700';
+            yes.style.cursor = 'pointer';
+            yes.style.background = '#ffffff';
+            yes.style.color = '#0a1929';
+            const cancel = document.createElement('button');
+            cancel.textContent = 'Cancel';
+            cancel.style.padding = '8px 14px';
+            cancel.style.border = '2px solid rgba(255,255,255,0.8)';
+            cancel.style.borderRadius = '8px';
+            cancel.style.fontWeight = '700';
+            cancel.style.cursor = 'pointer';
+            cancel.style.background = 'transparent';
+            cancel.style.color = '#ffffff';
+            actions.appendChild(yes);
+            actions.appendChild(cancel);
+            toast.appendChild(actions);
+            document.body.appendChild(toast);
+            currentConfirmToast = toast;
+            const remove = () => {
+                toast.classList.add('remove');
+                setTimeout(() => {
+                    toast.remove();
+                    currentConfirmToast = null;
+                }, 300);
+            };
+            yes.addEventListener('click', () => { remove(); onConfirm && onConfirm(); });
+            cancel.addEventListener('click', remove);
+        }
+
+        function loadUserData() {
+            const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+            if (!isLoggedIn) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const storedEmail = sessionStorage.getItem('userEmail') || '';
+            const storedName = sessionStorage.getItem('userName');
+            const finalEmail = storedEmail || 'user@example.com';
+            const derived = storedEmail ? storedEmail.split('@')[0] : 'User';
+            const finalName = storedName || derived;
+
+            const img = sessionStorage.getItem('profileImage');
+            const lastTemplateName = sessionStorage.getItem('lastTemplateName')
+                || sessionStorage.getItem('appName')
+                || 'Website name';
+            const lastTemplateLogoData = sessionStorage.getItem('lastTemplateLogo')
+                || sessionStorage.getItem('generatedLogo')
+                || sessionStorage.getItem('uploadedLogo');
+
+            displayEmail.textContent = finalEmail;
+            emailInput.value = finalEmail;
+            displayName.textContent = finalName;
+            fullNameInput.value = finalName;
+            if (img) userAvatar.src = img;
+
+            if (lastTemplateNameEl) lastTemplateNameEl.textContent = lastTemplateName;
+            if (lastTemplateUserEl) lastTemplateUserEl.textContent = `by ${finalName}`;
+            const logoSrc = lastTemplateLogoData || img || (userAvatar ? userAvatar.src : '');
+            if (lastTemplateLogo && logoSrc) lastTemplateLogo.src = logoSrc;
+
+            // Apply user-selected color palette to the Last website block
+            applyDynamicTheme();
+        }
+
+        function setNameFromEmail() {
+            const email = (userEmail.value || '').trim();
+            fullNameInput.value = email ? email.split('@')[0] : '';
+        }
+
+        if (emailInput) 
+        emailInput.addEventListener('input', setNameFromEmail);
+
+        if (avatarInput) {
+            avatarInput.addEventListener('change', function(e) {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    userAvatar.src = ev.target.result;
+                    sessionStorage.setItem('profileImage', ev.target.result);
+                    showToast('Profile photo updated!');
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        window.saveChanges = function() {
+            const email = (emailInput.value || '').trim();
+            if (!email) { showToast('Please enter a valid email.', 'error'); return; }
+            const name = (fullNameInput.value || '').trim() || (email.split('@')[0] || 'User');
+            sessionStorage.setItem('userEmail', email);
+            sessionStorage.setItem('userName', name);
+            displayEmail.textContent = email;
+            displayName.textContent = name;
+            showToast('Profile updated successfully!', 'green');
+        };
+
+        window.logout = function() {
+            showConfirmToast('Log out from your account?', function() {
+                sessionStorage.removeItem('loggedIn');
+                sessionStorage.removeItem('userName');
+                sessionStorage.removeItem('userEmail');
+                sessionStorage.removeItem('profileImage');
+                showToast('Logged out successfully');
+                setTimeout(() => { window.location.href = 'login.html'; }, 600);
+            });
+        };
+
+        window.createNewProject = function() {
+            window.location.href = 'profile_setup.html';
+        };
+
+        // Open the last saved website preview (uses sessionStorage content)
+        window.openSavedWebsite = function() {
+            window.location.href = 'saved_websites.html';
+        };
+
+        // Open saved evaluations list
+        window.openSavedEvaluation = function() {
+            window.location.href = 'saved_evaluations.html';
+        };
+
+        // Populate Saved websites tile with data from localStorage
+        function updateSavedWebsitesBox() {
+            try {
+                const websites = JSON.parse(localStorage.getItem('savedWebsites') || '[]');
+                const evals = JSON.parse(localStorage.getItem('savedEvaluations') || '[]');
+                const countsEl = document.getElementById('savedCounts');
+                const metaEl = document.getElementById('savedMeta');
+                const mainLogoEl = document.getElementById('savedMainLogo');
+                const slots = ['ribbon0','ribbon1','ribbon2'];
+
+                // Counts
+                if (countsEl) countsEl.textContent = `${websites.length} site${websites.length !== 1 ? 's' : ''} • ${evals.length} eval${evals.length !== 1 ? 's' : ''}`;
+                if (metaEl && websites.length) {
+                    const latest = websites[websites.length - 1];
+                    const when = latest.createdAt ? new Date(latest.createdAt) : null;
+                    metaEl.textContent = when ? `Updated ${when.toLocaleDateString()}` : 'Recently updated';
+                }
+
+                // Main badge uses last template logo if available, else latest saved website logo
+                const lastTemplateLogoData = sessionStorage.getItem('lastTemplateLogo') || sessionStorage.getItem('generatedLogo') || sessionStorage.getItem('uploadedLogo') || '';
+                if (mainLogoEl) {
+                    const src = lastTemplateLogoData || (websites.length ? (websites[websites.length - 1].logo || '') : '');
+                    if (src) {
+                        mainLogoEl.src = src;
+                    } else {
+                        mainLogoEl.alt = 'Logo';
+                    }
+                }
+
+                // Fill ribbons with recent three websites (no cards)
+                for (let i=0; i<slots.length; i++) {
+                    const el = document.getElementById(slots[i]);
+                    if (!el) continue;
+                    const w = websites[websites.length - 1 - i];
+                    if (w) {
+                        // Build ribbon contents: logo circle + name
+                        const name = (w.name || 'Website').toString();
+                        const initial = name.charAt(0).toUpperCase();
+                        const logoHtml = w.logo ? `<img src="${w.logo}" alt="${name}">` : `<span style="font-size:11px;font-weight:900;color:#0a1929;">${initial}</span>`;
+                        el.innerHTML = `<div class="ribbon-logo">${logoHtml}</div><span class="ribbon-name">${name}</span>`;
+
+                        // Tint by website palette
+                        const pal = w.palette;
+                        function getColors(p) {
+                            if (!p) return null;
+                            if (Array.isArray(p)) return [p[0], p[1] || p[0]];
+                            if (Array.isArray(p.colors)) return [p.colors[0], p.colors[1] || p.colors[0]];
+                            const c1 = p.primary || p.color1; const c2 = p.secondary || p.color2 || c1; return c1 ? [c1, c2] : null;
+                        }
+                        const cols = getColors(pal);
+                        if (cols) {
+                            const c1 = cols[0]; const c2 = cols[1] || cols[0];
+                            const r1 = hexToRgb(c1); const r2 = hexToRgb(c2);
+                            if (r1 && r2) {
+                                el.style.background = `linear-gradient(135deg, rgba(${r1.r},${r1.g},${r1.b},0.8) 0%, rgba(${r2.r},${r2.g},${r2.b},0.7) 100%)`;
+                                el.style.borderColor = adjustColorOpacity(c1, 0.6);
+                                el.style.boxShadow = '0 12px 26px rgba(0,0,0,0.25)';
+                            }
+                        }
+
+                        // Click through to the website preview by id
+                        if (w.id) {
+                            el.onclick = function(e){ e.stopPropagation(); window.location.href = `final_preview.html?id=${w.id}`; };
+                            el.title = 'Open website';
+                        }
+                    } else {
+                        el.innerHTML = '';
+                        el.style.background = 'rgba(255,255,255,0.7)';
+                        el.style.borderColor = 'rgba(126,179,196,0.28)';
+                        el.onclick = null;
+                        el.title = '';
+                    }
+                }
+            } catch(e) {
+                console.warn('Failed to update saved websites tile:', e);
+            }
+        }
+
+        // Update evaluation count from localStorage and tint each card by its own palette
+        function updateEvaluationCount() {
+            try {
+                const savedEvaluations = JSON.parse(localStorage.getItem('savedEvaluations') || '[]');
+                const evalCount = document.getElementById('evalCount');
+                const evalStack = document.getElementById('evalStack');
+
+                if (evalCount) {
+                    const count = savedEvaluations.length;
+                    evalCount.textContent = `${count} evaluation${count !== 1 ? 's' : ''} saved`;
+                }
+
+                // Helper: normalize palette to [c1, c2]
+                function getPaletteColors(p) {
+                    if (!p) return null;
+                    try {
+                        if (Array.isArray(p)) {
+                            return [p[0], p[1] || p[0]];
+                        }
+                        if (Array.isArray(p.colors)) {
+                            const arr = p.colors; return [arr[0], arr[1] || arr[0]];
+                        }
+                        const c1 = p.primary || p.color1; const c2 = p.secondary || p.color2 || c1;
+                        if (c1) return [c1, c2];
+                    } catch(e) {}
+                    return null;
+                }
+
+                const cards = evalStack ? evalStack.querySelectorAll('.eval-card') : [];
+                for (let i = 0; i < 5; i++) {
+                    const logoEl = document.getElementById(`logo${i}`);
+                    const nameEl = document.getElementById(`name${i}`);
+                    const cardEl = cards[i];
+
+                    if (i < savedEvaluations.length) {
+                        const ev = savedEvaluations[i];
+                        const name = ev.name || `Website ${i + 1}`;
+                        const logo = ev.logo;
+                        const pal = getPaletteColors(ev.palette);
+
+                        if (nameEl) {
+                            nameEl.textContent = name.substring(0, 16);
+                            nameEl.title = name;
+                        }
+
+                        if (logoEl) {
+                            if (logo) {
+                                logoEl.innerHTML = `<img src="${logo}" alt="${name}">`;
+                            } else {
+                                logoEl.textContent = name.charAt(0).toUpperCase();
+                                logoEl.innerHTML = logoEl.textContent;
+                            }
+                        }
+
+                        // Per-evaluation palette tinting
+                        if (cardEl && pal && pal[0]) {
+                            const c1 = pal[0]; const c2 = pal[1] || pal[0];
+                            const rgb1 = hexToRgb(c1); const rgb2 = hexToRgb(c2);
+                            if (rgb1 && rgb2) {
+                                const faceGradient = `linear-gradient(135deg, rgba(${rgb1.r}, ${rgb1.g}, ${rgb1.b}, 0.65) 0%, rgba(${rgb2.r}, ${rgb2.g}, ${rgb2.b}, 0.5) 100%)`;
+                                cardEl.style.background = faceGradient;
+                                cardEl.style.border = `1px solid ${adjustColorOpacity(c1, 0.4)}`;
+                                cardEl.style.boxShadow = '0 12px 28px rgba(0,0,0,0.28)';
+                            }
+                        }
+                        if (logoEl && pal && pal[0]) {
+                            logoEl.style.background = adjustColorOpacity(pal[0], 0.55);
+                        }
+
+                        // Click to open specific evaluation detail
+                        if (cardEl) {
+                            cardEl.onclick = function(e){ e.stopPropagation(); window.location.href = `final_preview.html?evalId=${ev.id}`; };
+                            cardEl.style.pointerEvents = 'auto';
+                            cardEl.title = 'View details';
+                        }
+                    } else {
+                        // Placeholder for empty slots
+                        if (nameEl) { nameEl.textContent = '—'; nameEl.style.opacity = '0.6'; }
+                        if (logoEl) { logoEl.textContent = '+'; logoEl.style.opacity = '0.6'; }
+                        if (cardEl) { cardEl.onclick = null; cardEl.title = ''; }
+                    }
+                }
+            } catch (e) {
+                console.warn('Failed to update evaluation count:', e);
+                const evalCount = document.getElementById('evalCount');
+                if (evalCount) evalCount.textContent = '0 evaluations saved';
+            }
+        }
+
+        // If URL has ?autoCreate=1, create a starter project before rendering tiles
+        try {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('autoCreate') === '1') {
+                quickCreateProject();
+            }
+        } catch(_) {}
+
+        loadUserData();
+        updateEvaluationCount();
+        updateSavedWebsitesBox();
+    })();
+    </script>
+
+</body>
+</html>

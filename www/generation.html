@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Generator — Build</title>
+  <link rel="icon" href="images/website_logo.png" type="image/png"/>
+  <link rel="stylesheet" href="generation.css">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="box">
+    <h1 id="headerTitle">App Generation — Painter</h1>
+    <p id="headerDesc">Use the tools to add shapes, pick colors, edit text, and compose on the whiteboard.</p>
+
+    <!-- Sample Designs Section -->
+    <div style="background:rgba(255,255,255,0.05);padding:20px;border-radius:12px;margin-top:20px;margin-bottom:20px;border:2px dashed rgba(255,255,255,0.2)">
+      <div style="text-align:center;margin-bottom:16px">
+        <strong style="color:#fff;font-size:16px">💡 Sample Designs</strong>
+        <p style="color:rgba(255,255,255,0.7);font-size:13px;margin-top:8px">A sample design is provided to guide you. Use it as inspiration to create your own version.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:12px;max-width:700px;margin:0 auto">
+        <div style="background:rgba(255,255,255,0.9);padding:12px;border-radius:8px;text-align:center">
+          <img src="images/logo_designs/gb.png" alt="Sample logo 1" style="width:100%;height:80px;object-fit:contain">
+        </div>
+        <div style="background:rgba(255,255,255,0.9);padding:12px;border-radius:8px;text-align:center">
+          <img src="images/logo_designs/hp.png" alt="Sample logo 2" style="width:100%;height:80px;object-fit:contain">
+        </div>
+        <div style="background:rgba(255,255,255,0.9);padding:12px;border-radius:8px;text-align:center">
+          <img src="images/logo_designs/lv.png" alt="Sample logo 3" style="width:100%;height:80px;object-fit:contain">
+        </div>
+        <div style="background:rgba(255,255,255,0.9);padding:12px;border-radius:8px;text-align:center">
+          <img src="images/logo_designs/me.png" alt="Sample logo 4" style="width:100%;height:80px;object-fit:contain">
+        </div>
+        <div style="background:rgba(255,255,255,0.9);padding:12px;border-radius:8px;text-align:center">
+          <img src="images/logo_designs/one.png" alt="Sample logo 5" style="width:100%;height:80px;object-fit:contain">
+        </div>
+        <div style="background:rgba(255,255,255,0.9);padding:12px;border-radius:8px;text-align:center">
+          <img src="images/logo_designs/ysl.png" alt="Sample logo 6" style="width:100%;height:80px;object-fit:contain">
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:12px">
+        <a href="https://www.pinterest.com/search/pins/?q=logo%20design%20inspiration" target="_blank" style="color:rgba(31, 27, 27, 0.6);font-size:12px;text-decoration:none;transition:color 0.2s">
+          View more logo ideas →
+        </a>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:18px;margin-top:18px;align-items:flex-start">
+      <!-- Tools column -->
+      <div style="width:300px">
+        <div style="background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;margin-bottom:12px">
+          <strong>Shapes</strong>
+          <div id="shapes" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+            <button class="tool" data-shape="rect">▭</button>
+            <button class="tool" data-shape="rounded">▣</button>
+            <button class="tool" data-shape="circle">◯</button>
+            <button class="tool" data-shape="ellipse">◔</button>
+            <button class="tool" data-shape="triangle">△</button>
+            <button class="tool" data-shape="star">★</button>
+            <button class="tool" data-shape="line">／</button>
+            <button class="tool" data-shape="text">T</button>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;margin-bottom:12px">
+          <strong>Color palette</strong>
+          <div id="palette" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+            <input id="colorPicker" type="color" value="#7C4DFF" title="Pick color" style="width:42px;height:34px;border:none;padding:0;background:transparent;cursor:pointer">
+            <button id="addColorBtn" class="tool">Add</button>
+          </div>
+        </div>
+
+        <div id="textControls" style="background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;display:none">
+          <strong>Text options</strong>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button id="boldBtn" class="tool">B</button>
+            <button id="italicBtn" class="tool">I</button>
+            <button id="underlineBtn" class="tool">U</button>
+          </div>
+          <div style="margin-top:10px;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px">
+            <label style="font-size:12px;display:block;margin-bottom:8px;font-weight:700;color:#fff">FONT FAMILY</label>
+            <select id="fontFamily" style="width:100%;padding:10px;border-radius:6px;border:2px solid rgba(124,77,255,0.5);background:rgba(0,0,0,0.3);color:#fff;font-weight:600;cursor:pointer">
+              <option value="Arial">Arial</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Courier New">Courier New</option>
+              <option value="Comic Sans MS">Comic Sans MS</option>
+              <option value="Verdana">Verdana</option>
+              <option value="Trebuchet MS">Trebuchet MS</option>
+              <option value="Impact">Impact</option>
+            </select>
+          </div>
+          <div style="margin-top:10px;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px">
+            <label style="font-size:12px;display:block;margin-bottom:8px;font-weight:700;color:#fff">FONT SIZE</label>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input id="fontSize" type="range" min="8" max="72" value="16" style="flex:1;cursor:pointer">
+              <span id="fontSizeDisplay" style="min-width:35px;text-align:center;font-weight:700">16</span>
+            </div>
+          </div>
+          <div style="margin-top:10px;padding:10px;background:rgba(255,255,255,0.05);border-radius:8px">
+            <label style="font-size:12px;display:block;margin-bottom:8px;font-weight:700;color:#fff">EDIT TEXT</label>
+            <input id="textInput" type="text" placeholder="Click to edit..." style="width:100%;padding:10px;border-radius:6px;border:2px solid rgba(124,77,255,0.5);background:rgba(0,0,0,0.3);color:#fff;font-weight:600;font-size:14px">
+          </div>
+        </div>
+
+        <div id="appearanceControls" style="background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;margin-top:12px">
+          <strong>Appearance</strong>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+            <label style="display:flex;align-items:center;gap:6px"><input id="fillToggle" type="checkbox" checked> Fill</label>
+            <label style="display:flex;align-items:center;gap:6px">Stroke: <input id="strokeColorPicker" type="color" value="#000000" style="margin-left:6px"></label>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+            <label style="font-size:13px">Width</label>
+            <input id="strokeWidth" type="range" min="0" max="12" value="2">
+            <select id="strokeStyle">
+              <option value="solid">Solid</option>
+              <option value="dashed">Dashed</option>
+              <option value="dotted">Dotted</option>
+            </select>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+            <label style="font-size:13px">Layer</label>
+            <button id="sendBackBtn" class="tool" title="Send to back">↓</button>
+            <button id="bringFrontBtn" class="tool" title="Bring to front">↑</button>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button id="deleteBtn" class="tool" style="background:lab(45.73% 70.62 57.65);color:#fff">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Whiteboard column -->
+      <div style="flex:1">
+        <div id="whiteboard" style="background:#ffffff;border-radius:8px;height:520px;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(2,6,23,0.2)"></div>
+        <div style="margin-top:10px;display:flex;gap:12px">
+          <button id="clearBtn" class="btn-primary">Clear</button>
+          <button id="saveLogoBtn" class="btn-primary">Save logo</button>
+          <a class="btn-primary" href="app_setup.html">Back</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="notification-modal">
+      <div class="notification-content">
+        <div class="notification-icon" id="notifIcon">✓</div>
+        <div class="notification-title" id="notifTitle">Success!</div>
+        <div class="notification-message" id="notifMessage">Your changes have been saved.</div>
+        <button class="notification-btn" id="notifBtn">Continue</button>
+      </div>
+    </div>
+
+    <script>
+      // Notification function
+      function showNotification(type, title, message, buttonText = 'OK', callback = null) {
+        const modal = document.getElementById('notificationModal');
+        const icon = document.getElementById('notifIcon');
+        const titleEl = document.getElementById('notifTitle');
+        const messageEl = document.getElementById('notifMessage');
+        const btn = document.getElementById('notifBtn');
+        
+        // Set icon based on type
+        icon.className = 'notification-icon ' + type;
+        if (type === 'success') icon.textContent = '✓';
+        else if (type === 'error') icon.textContent = '⚠️';
+        else if (type === 'warning') icon.textContent = '💡';
+        
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        btn.textContent = buttonText;
+        
+        modal.classList.add('active');
+        
+        btn.onclick = function() {
+          modal.classList.remove('active');
+          if (callback) callback();
+        };
+        
+        modal.onclick = function(e) {
+          if (e.target === modal) {
+            modal.classList.remove('active');
+            if (callback) callback();
+          }
+        };
+      }
+
+      (function(){
+        let appName = 'Your Brand';
+        const userProfile = sessionStorage.getItem('userProfile');
+        if (userProfile) {
+          const profile = JSON.parse(userProfile);
+          appName = profile.websiteName || 'Your Brand';
+        }
+        
+        document.getElementById('headerTitle').innerHTML = `Generate your own <span style="background:linear-gradient(135deg,#154552,#357a8e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:900">${appName}</span> logo`;
+        document.getElementById('headerDesc').textContent = `Design a unique logo for ${appName} using our painter tools. Add shapes, colors, and text.`;
+      })();
+
+      (function(){
+        const colors = ['#0EA5E9','#7C4DFF','#06D6A0','#FFB703','#EF476F','#FFFFFF','#000000','#F97316','#06B6D4','#FB7185','#FB923C','#34D399'];
+        const palette = document.getElementById('palette');
+        const colorPicker = document.getElementById('colorPicker');
+        const addColorBtn = document.getElementById('addColorBtn');
+        const fillToggle = document.getElementById('fillToggle');
+        const strokeColorPicker = document.getElementById('strokeColorPicker');
+        const strokeWidth = document.getElementById('strokeWidth');
+        const strokeStyle = document.getElementById('strokeStyle');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const shapesEl = document.getElementById('shapes');
+        const whiteboard = document.getElementById('whiteboard');
+        const textControls = document.getElementById('textControls');
+        const textInput = document.getElementById('textInput');
+        const boldBtn = document.getElementById('boldBtn');
+        const italicBtn = document.getElementById('italicBtn');
+        const underlineBtn = document.getElementById('underlineBtn');
+        const fontFamily = document.getElementById('fontFamily');
+        const fontSize = document.getElementById('fontSize');
+        const fontSizeDisplay = document.getElementById('fontSizeDisplay');
+        const sendBackBtn = document.getElementById('sendBackBtn');
+        const bringFrontBtn = document.getElementById('bringFrontBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const saveLogoBtn = document.getElementById('saveLogoBtn');
+
+        let currentColor = colors[0];
+        let currentTool = 'rect';
+        let selectedEl = null;
+        let hoverEl = null;
+        let currentFontFamily = 'Arial';
+        let currentFontSize = 16;
+        let fillMode = true;
+        let currentStrokeColor = '#000000';
+        let currentStrokeWidth = 2;
+        let currentStrokeStyle = 'solid';
+        let zIndexCounter = 1;
+        let editingEl = null;
+
+        // build palette
+        colors.forEach(c => {
+          const sw = document.createElement('div');
+          sw.className = 'palette-swatch';
+          sw.style.background = c;
+          sw.dataset.color = c;
+          sw.addEventListener('click', () => {
+            currentColor = c;
+            const target = hoverEl || selectedEl;
+            if (target && target.dataset.type === 'text') {
+              target.style.color = c;
+              target.dataset.color = c;
+            } else if (target) {
+              target.style.background = c;
+              target.dataset.color = c;
+            }
+          });
+          palette.appendChild(sw);
+        });
+
+        addColorBtn.addEventListener('click', () => {
+          const c = colorPicker.value;
+          if (!c) return;
+          const sw = document.createElement('div');
+          sw.className = 'palette-swatch';
+          sw.style.background = c;
+          sw.dataset.color = c;
+          sw.addEventListener('click', () => { currentColor = c; const target = hoverEl || selectedEl; if(target && target.dataset.type === 'text') { target.style.color = c; target.dataset.color = c; } else if(target) { target.style.background = c; target.dataset.color = c; } });
+          palette.appendChild(sw);
+        });
+
+        if(fillToggle) fillToggle.addEventListener('change', (e) => { 
+          fillMode = e.target.checked;
+          const target = selectedEl;
+          if(target && target.dataset.type !== 'text') {
+            updateShapeAppearance(target);
+          }
+        });
+        if(strokeColorPicker) strokeColorPicker.addEventListener('input', (e) => { 
+          currentStrokeColor = e.target.value;
+          const target = selectedEl;
+          if(target && target.dataset.type !== 'text') {
+            updateShapeAppearance(target);
+          }
+        });
+        if(strokeWidth) strokeWidth.addEventListener('input', (e) => { 
+          currentStrokeWidth = parseInt(e.target.value);
+          const target = selectedEl;
+          if(target && target.dataset.type !== 'text') {
+            updateShapeAppearance(target);
+          }
+        });
+        if(strokeStyle) strokeStyle.addEventListener('change', (e) => { 
+          currentStrokeStyle = e.target.value;
+          const target = selectedEl;
+          if(target && target.dataset.type !== 'text') {
+            updateShapeAppearance(target);
+          }
+        });
+        if(fontFamily) fontFamily.addEventListener('change', (e) => { 
+          currentFontFamily = e.target.value;
+          if(editingEl && editingEl.dataset.type === 'text') { 
+            editingEl.style.fontFamily = e.target.value;
+            editingEl.dataset.fontFamily = e.target.value;
+          }
+        });
+        if(fontSize) fontSize.addEventListener('input', (e) => { 
+          const size = parseInt(e.target.value);
+          fontSizeDisplay.textContent = size;
+          if(editingEl && editingEl.dataset.type === 'text') { 
+            editingEl.style.fontSize = size + 'px';
+            editingEl.dataset.fontSize = size;
+          }
+        });
+        if(sendBackBtn) sendBackBtn.addEventListener('click', () => { if(selectedEl) { selectedEl.style.zIndex = 0; selectedEl.dataset.zIndex = 0; } });
+        if(bringFrontBtn) bringFrontBtn.addEventListener('click', () => { if(selectedEl) { selectedEl.style.zIndex = ++zIndexCounter; selectedEl.dataset.zIndex = zIndexCounter; } });
+        if(deleteBtn) deleteBtn.addEventListener('click', () => { if(selectedEl){ selectedEl.remove(); selectedEl = null; textControls.style.display='none'; } });
+
+        if(saveLogoBtn) saveLogoBtn.addEventListener('click', async () => {
+          const wb = document.getElementById('whiteboard');
+          const shapes = wb.querySelectorAll('.shape');
+          
+          if (shapes.length === 0) {
+            showNotification('warning', 'No Logo Created', 'Please create a logo first! Use the tools to add shapes, text, or colors.');
+            return;
+          }
+          
+          // Compute tight bounding box of shapes using their CSS positions
+          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+          shapes.forEach(shape => {
+            const left = parseFloat(shape.style.left) || 0;
+            const top = parseFloat(shape.style.top) || 0;
+            const w = shape.offsetWidth;
+            const h = shape.offsetHeight;
+            minX = Math.min(minX, left);
+            minY = Math.min(minY, top);
+            maxX = Math.max(maxX, left + w);
+            maxY = Math.max(maxY, top + h);
+          });
+          if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY)) {
+            showNotification('error', 'Logo Bounds Error', 'Could not determine logo bounds. Try moving a shape slightly and save again.');
+            return;
+          }
+          const padding = 20;
+          minX = Math.max(0, minX - padding);
+          minY = Math.max(0, minY - padding);
+          maxX = Math.min(wb.clientWidth, maxX + padding);
+          maxY = Math.min(wb.clientHeight, maxY + padding);
+          const tightW = Math.max(1, Math.floor(maxX - minX));
+          const tightH = Math.max(1, Math.floor(maxY - minY));
+          
+          // Build a temporary offscreen container with cloned shapes normalized to (0,0)
+          const temp = document.createElement('div');
+          temp.style.position = 'fixed';
+          temp.style.left = '-10000px';
+          temp.style.top = '0';
+          temp.style.width = tightW + 'px';
+          temp.style.height = tightH + 'px';
+          temp.style.background = 'transparent';
+          temp.style.zIndex = '-1';
+          temp.style.pointerEvents = 'none';
+          temp.style.borderRadius = '0';
+          temp.style.overflow = 'visible';
+          document.body.appendChild(temp);
+          
+          // Clone shapes into temp, adjust left/top relative to minX/minY
+          shapes.forEach(shape => {
+            const clone = shape.cloneNode(true);
+            const left = parseFloat(shape.style.left) || 0;
+            const top = parseFloat(shape.style.top) || 0;
+            clone.style.left = (left - minX) + 'px';
+            clone.style.top = (top - minY) + 'px';
+            clone.style.position = 'absolute';
+            // Normalize z-index stacking
+            clone.style.zIndex = '1';
+            temp.appendChild(clone);
+          });
+          
+          // Render the temp container
+          const canvas = await html2canvas(temp, {backgroundColor: null, scale: 2});
+          // Cleanup
+          document.body.removeChild(temp);
+          
+          const dataUrl = canvas.toDataURL('image/png');
+          sessionStorage.setItem('generatedLogo', dataUrl);
+          sessionStorage.removeItem('uploadedLogo');
+          showNotification('success', 'Logo Saved!', 'Your logo has been saved successfully and will be used in your generated website.', 'Continue', function() {
+            window.location.href = 'build_preview.html';
+          });
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if((e.key === 'Delete' || e.key === 'Backspace') && selectedEl){ selectedEl.remove(); selectedEl = null; textControls.style.display='none'; }
+        });
+
+        function updateShapeAppearance(el) {
+          if (!el || el.dataset.type === 'text') return;
+          
+          const type = el.dataset.type;
+          const color = el.dataset.color || currentColor;
+          
+          if (type === 'rect' || type === 'rounded' || type === 'circle' || type === 'ellipse') {
+            if (fillMode) {
+              el.style.background = color;
+              el.style.border = `${currentStrokeWidth}px ${currentStrokeStyle} ${currentStrokeColor}`;
+            } else {
+              el.style.background = 'transparent';
+              el.style.border = `${currentStrokeWidth}px ${currentStrokeStyle} ${currentStrokeColor}`;
+            }
+          } else if (type === 'triangle' || type === 'star') {
+            const shape = el.querySelector('polygon, path');
+            if (shape) {
+              if (fillMode) {
+                shape.setAttribute('fill', color);
+                shape.setAttribute('stroke', 'none');
+              } else {
+                shape.setAttribute('fill', 'none');
+                shape.setAttribute('stroke', currentStrokeColor);
+                shape.setAttribute('stroke-width', currentStrokeWidth);
+                shape.setAttribute('stroke-dasharray', currentStrokeStyle === 'dashed' ? '8 6' : (currentStrokeStyle === 'dotted' ? '2 4' : '0'));
+              }
+            }
+          } else if (type === 'line') {
+            const line = el.querySelector('line');
+            if (line) {
+              line.setAttribute('stroke', currentStrokeColor);
+              line.setAttribute('stroke-width', currentStrokeWidth);
+              line.setAttribute('stroke-dasharray', currentStrokeStyle === 'dashed' ? '8 6' : (currentStrokeStyle === 'dotted' ? '2 4' : '0'));
+            }
+          }
+        }
+
+        shapesEl.addEventListener('click', (ev) => {
+          const btn = ev.target.closest('button[data-shape]');
+          if (!btn) return;
+          currentTool = btn.dataset.shape;
+          textControls.style.display = currentTool === 'text' ? 'block' : 'none';
+        });
+
+        whiteboard.addEventListener('dblclick', (ev) => {
+          const rect = whiteboard.getBoundingClientRect();
+          const x = ev.clientX - rect.left;
+          const y = ev.clientY - rect.top;
+          addShape(currentTool, x, y);
+        });
+
+        clearBtn.addEventListener('click', () => { whiteboard.innerHTML = ''; selectedEl = null; textControls.style.display='none'; });
+
+        function addShape(type, x=120, y=120){
+          let el = document.createElement('div');
+          el.className = 'shape';
+          el.style.left = (x - 50) + 'px';
+          el.style.top = (y - 30) + 'px';
+          el.dataset.type = type;
+          el.dataset.color = currentColor;
+
+          if(type === 'rect'){
+            el.style.width = '120px'; el.style.height = '80px'; el.style.borderRadius='10px';
+            if(fillMode){ el.style.background = currentColor; el.style.border = `${currentStrokeWidth}px ${currentStrokeStyle} ${currentStrokeColor}`; el.style.boxSizing = 'border-box'; } else { el.style.background = 'transparent'; el.style.border = `${currentStrokeWidth}px ${currentStrokeStyle} ${currentStrokeColor}`; el.style.boxSizing = 'border-box'; }
+          } else if(type === 'rounded'){
+            el.style.width = '130px'; el.style.height = '84px'; el.style.borderRadius='20px';
+            if(fillMode){ el.style.background = currentColor; el.style.border = `${currentStrokeWidth}px ${currentStrokeStyle} ${currentStrokeColor}`; el.style.boxSizing = 'border-box'; } else { el.style.background = 'transparent'; el.style.border = `${currentStrokeWidth}px ${currentStrokeStyle} ${currentStrokeColor}`; el.style.boxSizing = 'border-box'; }
+          } else if(type === 'circle'){
+            el.style.width = '100px'; el.style.height = '100px'; el.style.borderRadius='50%';
+            if(fillMode){ el.style.background = currentColor; el.style.border = `${currentStrokeWidth}px ${currentStrokeStyle} ${currentStrokeColor}`; el.style.boxSizing = 'border-box'; } else { el.style.background = 'transparent'; el.style.border = `${currentStrokeWidth}px ${currentStrokeStyle} ${currentStrokeColor}`; el.style.boxSizing = 'border-box'; }
+          } else if(type === 'ellipse'){
+            el.style.width = '140px'; el.style.height = '80px'; el.style.borderRadius='50% / 60%';
+            if(fillMode){ el.style.background = currentColor; el.style.border = `${currentStrokeWidth}px ${currentStrokeStyle} ${currentStrokeColor}`; el.style.boxSizing = 'border-box'; } else { el.style.background = 'transparent'; el.style.border = `${currentStrokeWidth}px ${currentStrokeStyle} ${currentStrokeColor}`; el.style.boxSizing = 'border-box'; }
+          } else if(type === 'triangle'){
+            const tri = document.createElementNS('http://www.w3.org/2000/svg','svg');
+            tri.setAttribute('viewBox','0 0 100 100'); tri.setAttribute('width','120'); tri.setAttribute('height','120');
+            const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+            poly.setAttribute('points','50,10 90,85 10,85');
+            if(fillMode){ poly.setAttribute('fill', currentColor); poly.setAttribute('stroke','none'); } else { poly.setAttribute('fill','none'); poly.setAttribute('stroke', currentStrokeColor); poly.setAttribute('stroke-width', currentStrokeWidth); poly.setAttribute('stroke-dasharray', currentStrokeStyle === 'dashed' ? '8 6' : (currentStrokeStyle==='dotted'?'2 4':'0')); }
+            tri.appendChild(poly);
+            el.appendChild(tri);
+            el.style.width='120px'; el.style.height='120px';
+          } else if(type === 'line'){
+            el.style.width = '160px'; el.style.height = '4px'; el.style.borderRadius='2px';
+            if(fillMode){ el.style.background = currentColor; el.style.border = 'none'; } else { el.style.background = 'transparent'; el.style.border = 'none';
+              const ln = document.createElementNS('http://www.w3.org/2000/svg','svg'); ln.setAttribute('width','160'); ln.setAttribute('height','20'); const l = document.createElementNS('http://www.w3.org/2000/svg','line'); l.setAttribute('x1','0'); l.setAttribute('y1','10'); l.setAttribute('x2','160'); l.setAttribute('y2','10'); l.setAttribute('stroke',currentStrokeColor); l.setAttribute('stroke-width',currentStrokeWidth); if(currentStrokeStyle==='dashed') l.setAttribute('stroke-dasharray','8 6'); if(currentStrokeStyle==='dotted') l.setAttribute('stroke-dasharray','2 4'); ln.appendChild(l); el.appendChild(ln);
+            }
+          } else if(type === 'star'){
+            const svgEl = document.createElementNS('http://www.w3.org/2000/svg','svg');
+            svgEl.setAttribute('viewBox','0 0 24 24'); svgEl.setAttribute('width','80'); svgEl.setAttribute('height','80');
+            const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+            path.setAttribute('d','M12 .587l3.668 7.431L23.5 9.75l-5.75 5.602L19.335 24 12 19.897 4.665 24l1.584-8.648L.5 9.75l7.832-1.732L12 .587z');
+            if(fillMode){ path.setAttribute('fill', currentColor); path.setAttribute('stroke','none'); }
+            else { path.setAttribute('fill','none'); path.setAttribute('stroke', currentStrokeColor); path.setAttribute('stroke-width', currentStrokeWidth); if(currentStrokeStyle==='dashed') path.setAttribute('stroke-dasharray','8 6'); if(currentStrokeStyle==='dotted') path.setAttribute('stroke-dasharray','2 4'); }
+            svgEl.appendChild(path);
+            el.appendChild(svgEl);
+            el.style.width='100px'; el.style.height='100px';
+            el.style.pointerEvents = 'auto';
+          } else if(type === 'text'){
+            el.classList.add('text-shape');
+            el.contentEditable = false;
+            el.innerText = 'Edit me';
+            el.style.background = 'transparent';
+            el.style.color = '#000';
+            el.style.minWidth = '80px';
+            el.style.fontFamily = currentFontFamily;
+            el.style.fontSize = currentFontSize + 'px';
+            el.style.zIndex = ++zIndexCounter;
+            el.dataset.fontFamily = currentFontFamily;
+            el.dataset.fontSize = currentFontSize;
+            el.dataset.zIndex = zIndexCounter;
+          }
+
+          const needsHandle = ['rect','rounded','circle','ellipse','star','text','triangle','line'].includes(type);
+
+          whiteboard.appendChild(el);
+          makeSelectable(el);
+          makeDraggable(el);
+          if(needsHandle) makeResizable(el, type);
+          selectElement(el);
+        }
+
+        function applyAppearance(el){
+          if(!el) return;
+          const type = el.dataset.type;
+          if(type === 'star'){
+            const path = el.querySelector('path'); if(!path) return;
+            if(fillMode){ path.setAttribute('fill', currentColor); path.setAttribute('stroke','none'); }
+            else { path.setAttribute('fill','none'); path.setAttribute('stroke', currentStrokeColor); path.setAttribute('stroke-width', currentStrokeWidth); path.setAttribute('stroke-dasharray', currentStrokeStyle==='dashed'?'8 6':(currentStrokeStyle==='dotted'?'2 4':'0')); }
+            el.dataset.fillMode = fillMode;
+            el.dataset.strokeColor = currentStrokeColor;
+            el.dataset.strokeWidth = currentStrokeWidth;
+            el.dataset.strokeStyle = currentStrokeStyle;
+            el.dataset.color = currentColor;
+          } else if(type === 'triangle'){
+            const poly = el.querySelector('polygon'); if(!poly) return;
+            if(fillMode){ poly.setAttribute('fill', currentColor); poly.setAttribute('stroke','none'); }
+            else { poly.setAttribute('fill','none'); poly.setAttribute('stroke', currentStrokeColor); poly.setAttribute('stroke-width', currentStrokeWidth); poly.setAttribute('stroke-dasharray', currentStrokeStyle==='dashed'?'8 6':(currentStrokeStyle==='dotted'?'2 4':'0')); }
+            el.dataset.fillMode = fillMode;
+            el.dataset.strokeColor = currentStrokeColor;
+            el.dataset.strokeWidth = currentStrokeWidth;
+            el.dataset.strokeStyle = currentStrokeStyle;
+            el.dataset.color = currentColor;
+          } else if(type === 'line'){
+            const ln = el.querySelector('line'); if(ln){ ln.setAttribute('stroke', currentStrokeColor); ln.setAttribute('stroke-width', currentStrokeWidth); if(currentStrokeStyle==='dashed') ln.setAttribute('stroke-dasharray','8 6'); else if(currentStrokeStyle==='dotted') ln.setAttribute('stroke-dasharray','2 4'); else ln.removeAttribute('stroke-dasharray'); }
+            el.dataset.fillMode = fillMode;
+            el.dataset.strokeColor = currentStrokeColor;
+            el.dataset.strokeWidth = currentStrokeWidth;
+            el.dataset.strokeStyle = currentStrokeStyle;
+            el.dataset.color = currentColor;
+          } else if(type === 'text'){
+            if(fillMode){ el.style.color = currentColor; el.style.webkitTextStroke = '0px'; }
+            else { el.style.color = currentStrokeColor; el.style.webkitTextStroke = (currentStrokeWidth/6) + 'px ' + currentStrokeColor; }
+            el.style.fontFamily = currentFontFamily;
+            el.style.fontSize = currentFontSize + 'px';
+            el.dataset.fillMode = fillMode;
+            el.dataset.strokeColor = currentStrokeColor;
+            el.dataset.strokeWidth = currentStrokeWidth;
+            el.dataset.strokeStyle = currentStrokeStyle;
+            el.dataset.color = currentColor;
+            el.dataset.fontFamily = currentFontFamily;
+            el.dataset.fontSize = currentFontSize;
+          } else {
+            if(fillMode){ el.style.background = currentColor; el.style.border = `${currentStrokeWidth}px ${currentStrokeStyle} ${currentStrokeColor}`; el.style.boxSizing = 'border-box'; }
+            else { el.style.background = 'transparent'; el.style.border = `${currentStrokeWidth}px ${currentStrokeStyle} ${currentStrokeColor}`; el.style.boxSizing = 'border-box'; }
+            el.dataset.fillMode = fillMode;
+            el.dataset.strokeColor = currentStrokeColor;
+            el.dataset.strokeWidth = currentStrokeWidth;
+            el.dataset.strokeStyle = currentStrokeStyle;
+            el.dataset.color = currentColor;
+          }
+        }
+
+        function makeSelectable(el){
+          el.addEventListener('click', (ev) => { 
+            ev.stopPropagation();
+            selectElement(el);
+          });
+          el.addEventListener('mouseenter', () => { hoverEl = el; });
+          el.addEventListener('mouseleave', () => { if(hoverEl === el) hoverEl = null; });
+        }
+
+        function removeResizeHandle(el){
+          const h = el.querySelector('.resize-handle'); if(h) h.remove();
+        }
+
+        function makeResizable(el, type){
+          removeResizeHandle(el);
+          const handle = document.createElement('div');
+          handle.className = 'resize-handle';
+          el.appendChild(handle);
+
+          let startW=0, startH=0, startX=0, startY=0;
+          function onDown(e){
+            e.stopPropagation();
+            startW = el.offsetWidth; startH = el.offsetHeight;
+            startX = e.clientX; startY = e.clientY;
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+          }
+          function onMove(e){
+            const dx = e.clientX - startX; const dy = e.clientY - startY;
+            let newW = Math.max(24, startW + dx);
+            let newH = Math.max(24, startH + dy);
+            if(type === 'circle'){
+              const s = Math.max(newW, newH); newW = s; newH = s; el.style.borderRadius='50%';
+            }
+            if(type === 'star'){
+              el.style.width = newW + 'px'; el.style.height = newH + 'px';
+              const svg = el.querySelector('svg'); if(svg){ svg.setAttribute('width', newW); svg.setAttribute('height', newH); }
+            } else if(type === 'text'){
+              const size = Math.max(10, Math.round(newW/8)); el.style.fontSize = size + 'px';
+              el.style.minWidth = newW + 'px';
+            } else {
+              el.style.width = newW + 'px'; el.style.height = newH + 'px';
+            }
+          }
+          function onUp(){ document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); }
+          handle.addEventListener('mousedown', onDown);
+        }
+
+        function startTextEdit(el) {
+          if(el.dataset.type !== 'text') return;
+          editingEl = el;
+          el.classList.add('editing');
+          textInput.value = el.innerText;
+          textInput.focus();
+          if(el.dataset.fontFamily) fontFamily.value = el.dataset.fontFamily;
+          if(el.dataset.fontSize) {
+            fontSize.value = el.dataset.fontSize;
+            fontSizeDisplay.textContent = el.dataset.fontSize;
+          }
+        }
+
+        function stopTextEdit() {
+          if(editingEl) editingEl.classList.remove('editing');
+          editingEl = null;
+        }
+
+        function selectElement(el){
+          if(selectedEl) selectedEl.classList.remove('selected');
+          selectedEl = el;
+          selectedEl.classList.add('selected');
+
+          if(el.dataset.type === 'text') {
+            textControls.style.display = 'block';
+            startTextEdit(el);
+          } else {
+            textControls.style.display = 'none';
+            stopTextEdit();
+          }
+
+          const c = selectedEl.dataset.color || currentColor;
+          currentColor = c;
+          if(typeof selectedEl.dataset.fillMode !== 'undefined') fillMode = selectedEl.dataset.fillMode === 'true';
+          if(selectedEl.dataset.strokeColor) currentStrokeColor = selectedEl.dataset.strokeColor;
+          if(selectedEl.dataset.strokeWidth) currentStrokeWidth = selectedEl.dataset.strokeWidth;
+          if(selectedEl.dataset.strokeStyle) currentStrokeStyle = selectedEl.dataset.strokeStyle;
+
+          if(fillToggle) fillToggle.checked = !!fillMode;
+          if(strokeColorPicker) strokeColorPicker.value = currentStrokeColor || '#000000';
+          if(strokeWidth) strokeWidth.value = currentStrokeWidth || 2;
+          if(strokeStyle) strokeStyle.value = currentStrokeStyle || 'solid';
+        }
+
+        whiteboard.addEventListener('click', (e) => { 
+          if(e.target === whiteboard) {
+            if(selectedEl) selectedEl.classList.remove('selected');
+            selectedEl = null;
+            stopTextEdit();
+            textControls.style.display='none';
+          }
+        });
+
+        boldBtn.addEventListener('click', () => { 
+          if(editingEl) editingEl.style.fontWeight = editingEl.style.fontWeight === '700' ? '400' : '700';
+        });
+        
+        italicBtn.addEventListener('click', () => { 
+          if(editingEl) editingEl.style.fontStyle = editingEl.style.fontStyle === 'italic' ? 'normal' : 'italic';
+        });
+        
+        underlineBtn.addEventListener('click', () => { 
+          if(editingEl) editingEl.style.textDecoration = editingEl.style.textDecoration === 'underline' ? 'none' : 'underline';
+        });
+
+        textInput.addEventListener('input', (e) => { 
+          if(editingEl && editingEl.dataset.type === 'text') {
+            editingEl.innerText = e.target.value;
+          }
+        });
+
+        function makeDraggable(el){
+          el.style.touchAction = 'none';
+        }
+
+        // Improved dragging with smooth mouse tracking
+        (function(){
+          let dragEl = null;
+          let startX = 0, startY = 0, startLeft = 0, startTop = 0;
+          let isTextEditing = false;
+
+          function onDown(e){
+            if (e.button !== 0) return;
+            const targetShape = e.target.closest && e.target.closest('.shape');
+            if (!targetShape) return;
+            
+            // Don't drag if resizing or clicking inputs
+            if (e.target && (e.target.classList && e.target.classList.contains('resize-handle'))) return;
+            if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
+            
+            e.preventDefault();
+            dragEl = targetShape;
+            selectElement(dragEl);
+            dragEl.classList.add('dragging');
+            
+            startX = e.clientX;
+            startY = e.clientY;
+            startLeft = parseFloat(dragEl.style.left) || 0;
+            startTop = parseFloat(dragEl.style.top) || 0;
+            
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+          }
+
+          function onMove(e){
+            if(!dragEl) return;
+            
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            
+            let x = startLeft + dx;
+            let y = startTop + dy;
+            
+            const boardRect = whiteboard.getBoundingClientRect();
+            x = Math.max(0, Math.min(boardRect.width - dragEl.offsetWidth, x));
+            y = Math.max(0, Math.min(boardRect.height - dragEl.offsetHeight, y));
+            
+            dragEl.style.left = x + 'px';
+            dragEl.style.top = y + 'px';
+          }
+
+          function onUp(e){
+            if(!dragEl) return;
+            dragEl.classList.remove('dragging');
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            dragEl = null;
+            isTextEditing = false;
+          }
+
+          whiteboard.addEventListener('mousedown', onDown, {capture: true});
+        })();
+      })();
+    </script>
+  </div>
+</body>
+</html>

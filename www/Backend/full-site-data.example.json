@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "version": "1.0",
+    "timestamp": "2025-12-27T00:00:00.000Z",
+    "source": "TapToBuild-Frontend",
+    "env": "web"
+  },
+  "user": {
+    "name": "Example User",
+    "email": "user@example.com"
+  },
+  "profile": {
+    "firstName": "Narjes",
+    "lastName": "Almasri",
+    "websiteName": "Tech Solutions Co.",
+    "phone": "+962 79 000 0000"
+  },
+  "website": {
+    "appName": "Tech Solutions Co.",
+    "catalog": "modern",
+    "productLayout": "grid"
+  },
+  "branding": {
+    "palette": {
+      "name": "Ocean Breeze",
+      "description": "Cool and calming",
+      "colors": ["#0EA5E9", "#06B6D4", "#0891B2"]
+    },
+    "logo": {
+      "type": "generated",
+      "mime": "image/png",
+      "data": "data:image/png;base64,iVBORw0KGgoAAA...",
+      "sizeKB": 128
+    },
+    "settings": {
+      "logoSize": 56,
+      "logoBorderRadius": 12
+    },
+    "viewer": {
+      "zoom": 1.25,
+      "offsetX": 0,
+      "offsetY": 0
+    }
+  },
+  "assets": {
+    "content": {
+      "headline": "Build anything you imagine",
+      "subhead": "No code needed — start today",
+      "sections": [
+        { "id": "hero", "title": "Welcome", "text": "Create apps instantly." },
+        { "id": "features", "items": ["Drag & drop", "Templates", "Deploy"] }
+      ]
+    },
+    "images": {
+      "hero": "https://example.com/hero.png",
+      "gallery": [
+        "https://example.com/img1.png",
+        "https://example.com/img2.png"
+      ]
+    }
+  },
+  "flags": {
+    "adminEvaluationRequested": true,
+    "adminEvaluationRequestedAt": "2025-12-27T00:00:00.000Z"
+  },
+  "summary": {
+    "businessName": "Tech Solutions Co.",
+    "appName": "Tech Solutions Co.",
+    "paletteColors": 3,
+    "hasLogo": true
+  }
+}

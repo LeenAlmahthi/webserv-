@@ -1,0 +1,28 @@
+{
+  "name": "gp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "validate": "node validate-config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Narjes-almasri/frontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Narjes-almasri/frontend/issues"
+  },
+  "homepage": "https://github.com/Narjes-almasri/frontend#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^5.2.1",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}

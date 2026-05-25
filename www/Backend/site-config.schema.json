@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/site-config.schema.json",
+  "title": "Tap to Build Site Config",
+  "type": "object",
+  "required": ["profile", "website", "branding"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "properties": {
+        "version": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "source": { "type": "string" },
+        "env": { "type": "string" }
+      }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "required": ["websiteName"],
+      "properties": {
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "websiteName": { "type": "string", "minLength": 1 },
+        "phone": { "type": "string" }
+      }
+    },
+    "website": {
+      "type": "object",
+      "properties": {
+        "appName": { "type": "string" },
+        "catalog": { "type": "string", "enum": ["modern", "classic", "minimal", "grid", "custom"] },
+        "productLayout": { "type": "string", "enum": ["grid", "list", "cards", "masonry", "custom"] }
+      }
+    },
+    "branding": {
+      "type": "object",
+      "required": ["palette"],
+      "properties": {
+        "palette": {
+          "type": "object",
+          "required": ["colors"],
+          "properties": {
+            "name": { "type": "string" },
+            "description": { "type": "string" },
+            "colors": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" }
+            }
+          }
+        },
+        "logo": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["uploaded", "generated"] },
+            "mime": { "type": "string" },
+            "data": { "type": "string" },
+            "sizeKB": { "type": "number", "minimum": 0 }
+          }
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "logoSize": { "type": "number", "minimum": 0 },
+            "logoBorderRadius": { "type": "number", "minimum": 0 }
+          }
+        },
+        "viewer": {
+          "type": "object",
+          "properties": {
+            "zoom": { "type": "number", "minimum": 0 },
+            "offsetX": { "type": "number" },
+            "offsetY": { "type": "number" }
+          }
+        }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "properties": {
+        "content": { "type": "object" },
+        "images": { "type": "object" }
+      }
+    },
+    "flags": {
+      "type": "object",
+      "properties": {
+        "adminEvaluationRequested": { "type": "boolean" },
+        "adminEvaluationRequestedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "businessName": { "type": "string" },
+        "appName": { "type": "string" },
+        "paletteColors": { "type": "number" },
+        "hasLogo": { "type": "boolean" }
+      }
+    }
+  }
+}

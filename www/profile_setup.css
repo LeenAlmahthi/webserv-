@@ -1,0 +1,17 @@
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(0deg,#2A7777 0%,#90B8C1 50%,#AEC7CB 99.04%);background-blend-mode:plus-lighter;backdrop-filter:blur(2px);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.container{background:rgba(255,255,255,0.12);backdrop-filter:blur(10px);padding:60px;border-radius:24px;box-shadow:0 8px 32px rgba(0,0,0,0.1);max-width:500px;width:100%}
+h1{font-size:36px;margin-bottom:12px;color:#1a1a1a;font-weight:800;text-align:center}
+p{color:#333;margin-bottom:32px;font-size:16px;line-height:1.6}
+.form-group{margin-bottom:20px}
+label{display:block;font-size:14px;font-weight:700;color:#1a1a1a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
+input[type="text"],input[type="email"],input[type="tel"]{width:100%;padding:14px 16px;border:2px solid rgba(255,255,255,0.3);border-radius:10px;font-size:16px;background:rgba(255,255,255,0.8);transition:all 0.3s;color:#1a1a1a}
+input[type="text"]:focus,input[type="email"]:focus,input[type="tel"]:focus{outline:none;border-color:rgba(255,255,255,0.8);background:#fff;box-shadow:0 0 0 4px rgba(126,179,196,0.2)}
+input::placeholder{color:#999}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.error{color:#ef476f;font-size:13px;margin-top:6px;font-weight:600;display:none}
+.btn-container{margin-top:40px}
+.btn{width:100%;padding:16px;border-radius:12px;border:none;font-weight:700;cursor:pointer;font-size:16px;transition:all 0.3s;text-transform:uppercase;letter-spacing:0.5px}
+.btn-primary{background:linear-gradient(135deg,#154552,#357a8e);color:#fff;box-shadow:0 8px 20px rgba(21,69,82,0.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(21,69,82,0.4)}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none}

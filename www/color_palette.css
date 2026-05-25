@@ -1,0 +1,29 @@
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:linear-gradient(0deg,#2A7777 0%,#90B8C1 50%,#AEC7CB 99.04%);background-blend-mode:plus-lighter;backdrop-filter:blur(2px);min-height:100vh;padding:40px 20px}
+.container{max-width:1200px;margin:0 auto}
+h1{font-size:48px;margin-bottom:12px;color:#1a1a1a;font-weight:900;text-align:center}
+p{text-align:center;color:#333;margin-bottom:50px;font-size:18px}
+.sections{display:grid;gap:60px;margin-bottom:60px}
+.section-title{font-size:28px;font-weight:800;color:#1a1a1a;margin-bottom:30px;text-align:center}
+.palettes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;margin-bottom:40px}
+.palette-card{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border-radius:16px;padding:24px;cursor:pointer;transition:all 0.3s;border:3px solid transparent}
+.palette-card:hover{transform:translateY(-8px);box-shadow:0 12px 40px rgba(0,0,0,0.15);border-color:rgba(255,255,255,0.5)}
+.palette-card.selected{border-color:#1a1a1a;box-shadow:0 8px 30px rgba(0,0,0,0.25)}
+#detectedPalette.selected{border:3px solid #1a1a1a;padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.25)}
+.color-row{display:flex;gap:12px;margin-bottom:16px}
+.color-swatch{flex:1;height:80px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);transition:transform 0.2s}
+.color-swatch:hover{transform:scale(1.05)}
+.palette-name{font-size:16px;font-weight:700;color:#1a1a1a;text-align:center}
+.palette-description{font-size:13px;color:#666;text-align:center;margin-top:8px}
+.logo-section{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border-radius:16px;padding:40px;text-align:center;margin-bottom:40px}
+.logo-preview{max-width:200px;max-height:200px;margin:20px auto;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.15)}
+.upload-btn{display:inline-block;padding:14px 32px;background:rgba(255,255,255,0.9);color:#1a1a1a;border-radius:10px;cursor:pointer;font-weight:600;transition:all 0.3s;margin-top:16px}
+.upload-btn:hover{background:#fff;transform:translateY(-2px)}
+input[type="file"]{display:none}
+.btn-container{display:flex;gap:20px;justify-content:center;margin-top:60px}
+.btn{padding:16px 48px;border-radius:12px;border:none;font-weight:700;cursor:pointer;font-size:16px;transition:all 0.3s;text-transform:uppercase;letter-spacing:0.5px}
+.btn-back{background:rgba(255,255,255,0.3);color:#1a1a1a;border:2px solid transparent}
+.btn-back:hover{background:rgba(255,255,255,0.4);border:2px solid rgba(255,255,255,0.8);transform:translateY(-2px)}
+.btn-continue{background:linear-gradient(135deg,#154552,#357a8e);color:#fff;border:2px solid transparent;box-shadow:0 8px 20px rgba(21,69,82,0.3)}
+.btn-continue:hover{border:2px solid rgba(255,255,255,0.8);transform:translateY(-2px);box-shadow:0 12px 30px rgba(21,69,82,0.4)}
+.btn-continue:disabled{opacity:0.6;cursor:not-allowed}

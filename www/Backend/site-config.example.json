@@ -1,0 +1,40 @@
+{
+  "timestamp": "2025-12-27T00:00:00.000Z",
+  "siteStatus": "confirmed",
+  "user": {
+    "name": "Example User",
+    "email": "user@example.com"
+  },
+  "profile": {
+    "firstName": "Narjes",
+    "lastName": "Almasri",
+    "websiteName": "Tech Solutions Co.",
+    "phone": "+962 79 000 0000"
+  },
+  "website": {
+    "appName": "Tech Solutions Co.",
+    "catalog": "modern",
+    "productLayout": "grid"
+  },
+  "branding": {
+    "palette": {
+      "name": "Ocean Breeze",
+      "description": "Cool and calming",
+      "colors": ["#0EA5E9", "#06B6D4", "#0891B2"]
+    },
+    "logo": {
+      "type": "uploaded",
+      "mime": "image/png",
+      "data": "data:image/png;base64,iVBORw0KGgoAAA..."
+    }
+  },
+  "assets": {
+    "images": {
+      "hero": "https://example.com/hero.png"
+    },
+    "content": {
+      "headline": "Build anything you imagine",
+      "subhead": "No code needed — start today"
+    }
+  }
+}

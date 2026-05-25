@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Choose Your Color Palette</title>
+  <link rel="icon" href="images/website_logo.png" type="image/png"/>
+  <script src="https://chir.cat/projects/TinyColor/tinycolor.js"></script>
+  <link rel="stylesheet" href="color_palette.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Choose Your Color Palette</h1>
+    <p>Select colors that match your brand or let us detect them from your logo</p>
+
+    <div class="sections">
+      <!-- Logo Detection Section -->
+      <div>
+        <div class="section-title">Detect from Logo</div>
+        <div class="logo-section">
+          <p style="color:#333;margin-bottom:16px">Upload your logo and we'll detect the perfect color palette</p>
+          <div id="logoPreview" style="display:none">
+            <img id="logoImg" class="logo-preview" src="" alt="Uploaded logo">
+            <div style="margin-top:16px;color:#1a1a1a">Logo uploaded ✓</div>
+            <div id="detectedPalette" style="margin-top:24px;display:none">
+              <div style="font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:12px">Detected Colors:</div>
+              <div class="color-row">
+                <div id="detectedColor1" class="color-swatch"></div>
+                <div id="detectedColor2" class="color-swatch"></div>
+                <div id="detectedColor3" class="color-swatch"></div>
+              </div>
+            </div>
+          </div>
+          <label for="logoUploadColor" class="upload-btn">📁 Choose Logo</label>
+          <input type="file" id="logoUploadColor" accept="image/*">
+        </div>
+      </div>
+
+      <!-- Predefined Palettes Section -->
+      <div>
+        <div class="section-title">Or Choose a Color Palette</div>
+        <div class="palettes-grid" id="palettesGrid"></div>
+      </div>
+    </div>
+
+    <div class="btn-container">
+      <button class="btn btn-back" onclick="goBack()">Back</button>
+      <button class="btn btn-continue" id="continueBtn" disabled onclick="continueToBuild()">Continue</button>
+    </div>
+  </div>
+
+  <script>
+    const colorPalettes = [
+      {
+        name: 'Ocean Breeze',
+        description: 'Cool and calming',
+        colors: ['#0EA5E9', '#06B6D4', '#0891B2']
+      },
+      {
+        name: 'Sunset Glow',
+        description: 'Warm and energetic',
+        colors: ['#FF6B35', '#F7931E', '#FDB913']
+      },
+      {
+        name: 'Forest Green',
+        description: 'Natural and fresh',
+        colors: ['#2D6A4F', '#40916C', '#74C69D']
+      },
+      {
+        name: 'Purple Dream',
+        description: 'Creative and bold',
+        colors: ['#7C4DFF', '#6A0572', '#C77DFF']
+      },
+      {
+        name: 'Coral Reef',
+        description: 'Vibrant and modern',
+        colors: ['#FF6B9D', '#FFC75F', '#F9C74F']
+      },
+      {
+        name: 'Midnight',
+        description: 'Professional and sleek',
+        colors: ['#1A1A1A', '#264653', '#2A9D8F']
+      },
+      {
+        name: 'Rose Garden',
+        description: 'Elegant and sophisticated',
+        colors: ['#E63946', '#F1FAEE', '#A8DADC']
+      },
+      {
+        name: 'Tech Blue',
+        description: 'Modern and trustworthy',
+        colors: ['#0066CC', '#00A8E8', '#00C9FF']
+      }
+    ];
+
+    let selectedPalette = null;
+    let uploadedLogo = null;
+    let detectedColors = null;
+
+    function extractColorsFromImage(imageSrc) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+
+          const colorMap = {};
+          for (let i = 0; i < data.length; i += 4) {
+            const r = Math.round(data[i] / 10) * 10;
+            const g = Math.round(data[i + 1] / 10) * 10;
+            const b = Math.round(data[i + 2] / 10) * 10;
+            const key = `${r},${g},${b}`;
+            colorMap[key] = (colorMap[key] || 0) + 1;
+          }
+
+          // Get top 3 most frequent colors
+          const colors = Object.entries(colorMap)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10)
+            .map(([color]) => {
+              const [r, g, b] = color.split(',').map(Number);
+              return { r, g, b };
+            })
+            .filter(c => {
+              // Filter out near-white and near-black colors
+              const brightness = (c.r + c.g + c.b) / 3;
+              return brightness > 30 && brightness < 225;
+            })
+            .slice(0, 3)
+            .map(c => {
+              const hex = '#' + [c.r, c.g, c.b].map(x => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+              }).join('').toUpperCase();
+              return hex;
+            });
+
+          // Ensure we have 3 colors
+          while (colors.length < 3) {
+            colors.push('#7C4DFF');
+          }
+
+          resolve(colors.slice(0, 3));
+        };
+        img.onerror = () => resolve(['#7C4DFF', '#06D6A0', '#FFB703']);
+        img.src = imageSrc;
+      });
+    }
+
+    function displayDetectedColors(colors) {
+      detectedColors = colors;
+      document.getElementById('detectedColor1').style.background = colors[0];
+      document.getElementById('detectedColor2').style.background = colors[1];
+      document.getElementById('detectedColor3').style.background = colors[2];
+      document.getElementById('detectedPalette').style.display = 'block';
+      
+      // Make detected palette clickable by adding event listener
+      const detectedPaletteElement = document.getElementById('detectedPalette');
+      detectedPaletteElement.style.cursor = 'pointer';
+      detectedPaletteElement.onclick = () => selectDetectedPalette(detectedPaletteElement);
+      
+      document.getElementById('continueBtn').disabled = false;
+
+      // Deselect other palettes
+      selectedPalette = null;
+      document.querySelectorAll('.palette-card').forEach(el => el.classList.remove('selected'));
+    }
+
+    function selectDetectedPalette(element) {
+      document.querySelectorAll('.palette-card').forEach(el => el.classList.remove('selected'));
+      selectedPalette = null;
+      element.classList.add('selected');
+      document.getElementById('continueBtn').disabled = false;
+    }
+
+    function renderPalettes() {
+      const grid = document.getElementById('palettesGrid');
+      colorPalettes.forEach((palette, index) => {
+        const card = document.createElement('div');
+        card.className = 'palette-card';
+        card.innerHTML = `
+          <div class="color-row">
+            ${palette.colors.map(color => `<div class="color-swatch" style="background:${color}"></div>`).join('')}
+          </div>
+          <div class="palette-name">${palette.name}</div>
+          <div class="palette-description">${palette.description}</div>
+        `;
+        card.addEventListener('click', () => selectPalette(index, card));
+        grid.appendChild(card);
+      });
+    }
+
+    function selectPalette(index, element) {
+      document.querySelectorAll('.palette-card').forEach(el => el.classList.remove('selected'));
+      const detectedPaletteElement = document.getElementById('detectedPalette');
+      if (detectedPaletteElement) {
+        detectedPaletteElement.classList.remove('selected');
+      }
+      element.classList.add('selected');
+      selectedPalette = index;
+      document.getElementById('continueBtn').disabled = false;
+    }
+
+    document.getElementById('logoUploadColor').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          uploadedLogo = event.target.result;
+          document.getElementById('logoImg').src = uploadedLogo;
+          document.getElementById('logoPreview').style.display = 'block';
+          
+          // Extract colors from the image
+          const colors = await extractColorsFromImage(uploadedLogo);
+          displayDetectedColors(colors);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function goBack() {
+      window.location.href = 'welcome.html';
+    }
+
+    function continueToBuild() {
+      if (selectedPalette !== null) {
+        sessionStorage.setItem('selectedPalette', JSON.stringify(colorPalettes[selectedPalette]));
+      } else if (detectedColors) {
+        sessionStorage.setItem('selectedPalette', JSON.stringify({
+          name: 'Detected from Logo',
+          description: 'Colors extracted from your logo',
+          colors: detectedColors
+        }));
+      } else if (uploadedLogo) {
+        sessionStorage.setItem('uploadedLogoForPalette', uploadedLogo);
+      }
+      
+      window.location.href = 'app_setup.html';
+    }
+
+    window.addEventListener('load', () => {
+      renderPalettes();
+    });
+  </script>
+</body>
+</html>

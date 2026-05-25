@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>App Setup — Generator</title>
+  <link rel="icon" href="images/website_logo.png" type="image/png"/>
+  <link rel="stylesheet" href="app_setup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="content">
+      <h1>Create a logo for <span id="brandName" style="background:linear-gradient(135deg,#154552,#357a8e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:900"></span></h1>
+      <p>Create a logo for your brand</p>
+
+      <div id="error" class="error"></div>
+
+      <div class="options-container">
+        <div class="option-card">
+          <div class="option-icon">🎨</div>
+          <h3>Start Customizing Your Own Logo</h3>
+          <p>Create a custom logo using our design tools</p>
+          <button type="button" class="btn btn-primary" onclick="customizeLogo()" style="width:100%;margin-top:16px">Start Designing →</button>
+        </div>
+
+        <div class="divider-vertical">OR</div>
+
+        <div class="option-card">
+          <div class="option-icon">📤</div>
+          <h3>Upload Existing Logo</h3>
+          <p>Already have a logo? Use it directly</p>
+          <label for="logoUpload" class="btn btn-primary" style="width:100%;margin-top:16px;display:block;text-align:center">Choose File →</label>
+          <input type="file" id="logoUpload" accept="image/*">
+        </div>
+      </div>
+
+      <div id="preview" class="preview-container" style="display:none">
+        <div class="preview-content">
+          <h3 style="margin-bottom:16px;color:#1a1a1a">Logo Preview</h3>
+          <img id="previewImg" src="" alt="Logo preview" class="preview-img">
+          <div class="preview-text">✓ Logo uploaded successfully!</div>
+          <button type="button" class="btn btn-primary" onclick="continueWithUploadedLogo()" style="width:100%;margin-top:16px">Continue</button>
+        </div>
+      </div>
+
+      <div class="btn-container" style="margin-top:40px">
+        <button type="button" class="btn btn-secondary" onclick="goBack()">Back</button>
+      </div>
+    </div>
+
+    <div class="illustration">
+      <div class="icon">✨</div>
+      <div class="card">
+        <h3>Design Freedom</h3>
+        <p>Intuitive tools to create your perfect logo with shapes, colors, and text.</p>
+      </div>
+      <div class="card">
+        <h3>Quick Start</h3>
+        <p>Upload existing artwork or design from scratch in minutes.</p>
+      </div>
+      <div class="card">
+        <h3>Your Brand</h3>
+        <p>Make it uniquely yours. Full creative control, no templates.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const errorDiv = document.getElementById('error');
+    const logoUpload = document.getElementById('logoUpload');
+    const preview = document.getElementById('preview');
+    const previewImg = document.getElementById('previewImg');
+    const brandNameEl = document.getElementById('brandName');
+    let uploadedLogo = null;
+    let appName = 'Your Brand';
+
+    // Handle logo upload
+    logoUpload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          uploadedLogo = event.target.result;
+          previewImg.src = uploadedLogo;
+          preview.style.display = 'block';
+          
+          // Save logo immediately
+          sessionStorage.setItem('appName', appName);
+          sessionStorage.setItem('uploadedLogo', uploadedLogo);
+          sessionStorage.removeItem('generatedLogo');
+          
+          errorDiv.style.color = '#06D6A0';
+          errorDiv.textContent = '✓ Your logo has been saved successfully!';
+          setTimeout(() => {
+            errorDiv.textContent = '';
+            errorDiv.style.color = '#ef476f';
+          }, 3000);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function customizeLogo() {
+      sessionStorage.setItem('appName', appName);
+      sessionStorage.removeItem('uploadedLogo');
+      window.location.href = 'generation.html';
+    }
+
+    function continueWithUploadedLogo() {
+      // Logo already saved, navigate to build preview
+      window.location.href = 'build_preview.html';
+    }
+
+    function goBack() {
+      window.location.href = 'color_palette.html';
+    }
+
+    window.addEventListener('load', () => {
+      const userProfile = sessionStorage.getItem('userProfile');
+      if (userProfile) {
+        const profile = JSON.parse(userProfile);
+        appName = profile.websiteName || 'Your Brand';
+      }
+      brandNameEl.textContent = appName;
+    });
+  </script>
+</body>
+</html>

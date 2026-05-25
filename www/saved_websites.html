@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Saved Websites</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:#f7f9fb;min-height:100vh;color:#0a1929}
+    .container{max-width:1200px;margin:0 auto;padding:24px}
+    h1{font-size:28px;font-weight:900;margin-bottom:16px;background:linear-gradient(135deg,#154552,#357a8e);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:22px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:18px;cursor:pointer;transition:all .25s;display:flex;flex-direction:column;gap:12px}
+    .card:hover{transform:translateY(-6px);box-shadow:0 16px 36px rgba(0,0,0,.16);border-color:#357a8e}
+    .thumb{width:100%;height:140px;border-radius:12px;background:#f0f4f8;background-size:cover;background-position:center;background-repeat:no-repeat}
+    .name{font-weight:900;font-size:16px;color:#0a1929;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
+    .meta{font-size:12px;color:#64748b;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:2px}
+    .empty{padding:32px;text-align:center;color:#64748b;border:2px dashed #e5e7eb;border-radius:16px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .btn{padding:10px 14px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;font-weight:700;cursor:pointer}
+    .btn:hover{border-color:#357a8e}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h1>Saved Websites</h1>
+      <button class="btn" onclick="window.location.href='profile.html'">Back to Profile</button>
+    </div>
+    <div id="list" class="grid"></div>
+    <div id="empty" class="empty" style="display:none">No saved websites yet. Save from the builder.</div>
+  </div>
+  <script>
+    (function(){
+      let saved = [];
+      try { saved = JSON.parse(localStorage.getItem('savedWebsites') || '[]'); } catch(e) {}
+      const list = document.getElementById('list');
+      const empty = document.getElementById('empty');
+      if (!saved.length){ empty.style.display='block'; return; }
+      saved.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+      saved.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.title = item.name || 'Saved Website';
+        const thumb = document.createElement('div');
+        thumb.className = 'thumb';
+        if (item.logo) thumb.style.backgroundImage = `url(${item.logo})`;
+        const name = document.createElement('div');
+        name.className = 'name';
+        name.textContent = item.name || 'Saved Website';
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        const owner = document.createElement('span');
+        owner.textContent = item.owner || 'Owner';
+        const date = document.createElement('span');
+        try {
+          const d = new Date(item.createdAt);
+          date.textContent = d.toLocaleString();
+        } catch(e) { date.textContent = item.createdAt || ''; }
+        meta.appendChild(owner);
+        meta.appendChild(date);
+        card.appendChild(thumb);
+        card.appendChild(name);
+        card.appendChild(meta);
+        card.addEventListener('click', function(){
+          window.location.href = 'final_preview.html?id=' + encodeURIComponent(item.id);
+        });
+        list.appendChild(card);
+      });
+    })();
+  </script>
+</body>
+</html>

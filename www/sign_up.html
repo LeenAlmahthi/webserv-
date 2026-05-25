@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Tap to Build</title>
+    <link rel="icon" href="images/website_logo.png" type="images/png"/>
+    <link rel="stylesheet" href="sign_up.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card signup-card">
+            <div class="header">
+                <h1>Create Account</h1>
+                <p class="subtitle">Already have an account? <a href="login.html">Log in</a></p>
+            </div>
+
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#666666">
+                                <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Z"/>
+                            </svg>
+                        </span>
+                        <input type="text" id="name" placeholder="Leen ghniam" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#666666">
+                                <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480v58q0 59-40.5 100.5T740-280q-35 0-66-15t-52-43q-29 29-65.5 43.5T480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480v58q0 26 17 44t43 18q26 0 43-18t17-44v-58q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93h200v80H480Zm0-280q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z"/>
+                            </svg>
+                        </span>
+                        <input type="email" id="email" placeholder="you@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#666666">
+                                <path d="M240-80q-33 0-56.5-23.5T160-160v-400q0-33 23.5-56.5T240-640h40v-80q0-83 58.5-141.5T480-920q83 0 141.5 58.5T680-720v80h40q33 0 56.5 23.5T800-560v400q0 33-23.5 56.5T720-80H240Zm0-80h480v-400H240v400Zm240-120q33 0 56.5-23.5T560-360q0-33-23.5-56.5T480-440q-33 0-56.5 23.5T400-360q0 33 23.5 56.5T480-280ZM360-640h240v-80q0-50-35-85t-85-35q-50 0-85 35t-35 85v80ZM240-160v-400 400Z"/>
+                            </svg>
+                        </span>
+                        <input type="password" id="password" placeholder="Create a strong password" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#666666">
+                                <path d="m644-428-58-58q9-47-27-88t-93-32l-58-58q17-8 34.5-12t37.5-4q75 0 127.5 52.5T660-500q0 20-4 37.5T644-428Zm128 126-58-56q38-29 67.5-63.5T832-500q-50-101-143.5-160.5T480-720q-29 0-57 4t-55 12l-62-62q41-17 84-25.5t90-8.5q151 0 269 83.5T920-500q-23 59-60.5 109.5T772-302Zm20 246L624-222q-35 11-70.5 16.5T480-200q-151 0-269-83.5T40-500q21-53 53-98.5t73-81.5L56-792l56-56 736 736-56 56ZM222-624q-29 26-53 57t-41 67q50 101 143.5 160.5T480-280q20 0 39-2.5t39-5.5l-36-38q-11 3-21 4.5t-21 1.5q-75 0-127.5-52.5T300-500q0-11 1.5-21t4.5-21l-84-82Zm319 93Zm-151 75Z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">Create Account</button>
+            </form>
+            <div id="signupAlert" class="signup-alert" role="alert" aria-live="polite" style="display:none;"></div>
+         
+        </div>
+    <script>
+        const openEye = `
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#666666">
+                <path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Z"/>
+            </svg>
+        `;
+
+        const closeEye = `
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#666666">
+                <path d="m644-428-58-58q9-47-27-88t-93-32l-58-58q17-8 34.5-12t37.5-4q75 0 127.5 52.5T660-500q0 20-4 37.5T644-428Zm128 126-58-56q38-29 67.5-63.5T832-500q-50-101-143.5-160.5T480-720q-29 0-57 4t-55 12l-62-62q41-17 84-25.5t90-8.5q151 0 269 83.5T920-500q-23 59-60.5 109.5T772-302Zm20 246L624-222q-35 11-70.5 16.5T480-200q-151 0-269-83.5T40-500q21-53 53-98.5t73-81.5L56-792l56-56 736 736-56 56ZM222-624q-29 26-53 57t-41 67q50 101 143.5 160.5T480-280q20 0 39-2.5t39-5.5l-36-38q-11 3-21 4.5t-21 1.5q-75 0-127.5-52.5T300-500q0-11 1.5-21t4.5-21l-84-82Z"/>
+            </svg>
+        `;
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.querySelector('.password-toggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.innerHTML = openEye;
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.innerHTML = closeEye;
+            }
+        }
+
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = "leen";
+            const email = document.getElementById('email').value.trim();
+            const username = email.split('@')[0];            
+            const password = document.getElementById('password').value;
+            const  bio = "test";
+            const  admin = false;
+            const btn = this.querySelector('.btn-primary');
+            const originalText = btn.textContent;
+            btn.textContent = 'Creating account...';
+            btn.disabled = true;
+
+            const payload = { name,username, email, password,bio,admin };
+            const base = "https://2ymu1pkhp9.execute-api.us-east-1.amazonaws.com/prod";
+            const alertBox = document.getElementById('signupAlert');
+
+            const showAlert = (msg, type = 'error') => {
+                if (!alertBox) return;
+                alertBox.textContent = msg;
+                alertBox.className = `signup-alert ${type === 'success' ? 'is-success' : 'is-error'}`;
+                alertBox.style.display = 'flex';
+            };
+
+            if (alertBox) {
+                alertBox.style.display = 'none';
+                alertBox.textContent = '';
+            }
+
+            try {
+                const res = await fetch(`https://2ymu1pkhp9.execute-api.us-east-1.amazonaws.com/prod/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json().catch(() => null);
+                const errorMessage = (data && (data.message || data.error || data.detail)) || res.statusText;
+
+                if (!res.ok) {
+                    if (res.status === 409 || /exist/i.test(errorMessage || '')) {
+                        showAlert('An account with this email already exists. Please log in instead.');
+                    } else {
+                        showAlert('Error: ' + errorMessage);
+                    }
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
+                sessionStorage.setItem('loggedIn', 'true');
+                sessionStorage.setItem('userName', username);
+                sessionStorage.setItem('userEmail', email);
+                
+                btn.textContent = 'Success!';
+                
+                setTimeout(() => {
+                    window.location.href = 'home_page.html';
+                }, 500);
+            } catch (err) {
+                console.error(err);
+                showAlert('Network error. Please try again.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // function handleAppleSignup() {
+        //     alert('Apple Sign Up - Coming soon!');
+        // }
+
+        // function handleGoogleSignup() {
+        //     alert('Google Sign Up - Coming soon!');
+        // }
+    </script>
+</body>
+</html>

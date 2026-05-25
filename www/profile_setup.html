@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Complete Your Profile</title>
+  <link rel="icon" href="images/website_logo.png" type="image/png"/>
+  <link rel="stylesheet" href="profile_setup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Complete Your Profile</h1>
+    <br><br>
+
+    <form id="profileForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input id="firstName" type="text" placeholder="e.g., Narjes" required>
+          <div class="error" id="firstNameError"></div>
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input id="lastName" type="text" placeholder="e.g., Almasri" required>
+          <div class="error" id="lastNameError"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="websiteName">Website/Business Name</label>
+        <input id="websiteName" type="text" placeholder="e.g., Tech Solutions Co." required>
+        <div class="error" id="websiteNameError"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input id="phone" type="tel" placeholder="e.g., +962 79.."  pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required>
+        <div class="error" id="phoneError"></div>
+      </div>
+
+      <div class="btn-container">
+        <button type="submit" class="btn btn-primary">Continue</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const profileForm = document.getElementById('profileForm');
+    const inputs = {
+      firstName: document.getElementById('firstName'),
+      lastName: document.getElementById('lastName'),
+      websiteName: document.getElementById('websiteName'),
+      phone: document.getElementById('phone')
+    };
+
+    function validateForm() {
+      let isValid = true;
+      const errors = {
+        firstName: document.getElementById('firstNameError'),
+        lastName: document.getElementById('lastNameError'),
+        websiteName: document.getElementById('websiteNameError'),
+        phone: document.getElementById('phoneError')
+      };
+
+      Object.keys(inputs).forEach(key => {
+        const value = inputs[key].value.trim();
+        if (!value) {
+          errors[key].textContent = 'This field is required';
+          errors[key].style.display = 'block';
+          isValid = false;
+        } else {
+          errors[key].style.display = 'none';
+        }
+      });
+
+      if (inputs.phone.value && !/[\d\s\-\+\(\)]{8,}/.test(inputs.phone.value)) {
+        errors.phone.textContent = 'Please enter a valid phone number';
+        errors.phone.style.display = 'block';
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    profileForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      if (!validateForm()) return;
+
+      sessionStorage.setItem('userProfile', JSON.stringify({
+        firstName: inputs.firstName.value.trim(),
+        lastName: inputs.lastName.value.trim(),
+        websiteName: inputs.websiteName.value.trim(),
+        phone: inputs.phone.value.trim()
+      }));
+
+      window.location.href = 'welcome.html';
+    });
+
+    window.addEventListener('load', () => {
+      const saved = sessionStorage.getItem('userProfile');
+      if (saved) {
+        const data = JSON.parse(saved);
+        inputs.firstName.value = data.firstName;
+        inputs.lastName.value = data.lastName;
+        inputs.websiteName.value = data.websiteName;
+        inputs.phone.value = data.phone;
+      }
+    });
+  </script>
+</body>
+</html>
